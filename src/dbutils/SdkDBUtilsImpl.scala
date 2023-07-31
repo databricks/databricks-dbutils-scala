@@ -4,7 +4,7 @@ package dbutils
 import scala.collection.JavaConverters._
 import com.databricks.sdk.WorkspaceClient
 import com.databricks.sdk.core.DatabricksConfig
-import com.databricks.sdk.service.files.Delete
+import com.databricks.sdk.service.files.{Delete, Put, ReadDbfsRequest}
 
 class SdkDBUtilsImpl(config: DatabricksConfig) extends DBUtils {
   private val client = new WorkspaceClient(config)
@@ -40,22 +40,32 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils {
   }
 
   override def cp(from: String, to: String, recurse: Boolean): Boolean = {
-    w.dbfs()
+    ???
   }
 
-  override def mv(from: String, to: String, recurse: Boolean): Boolean = ???
+  override def mv(from: String, to: String, recurse: Boolean): Boolean = {
+    // check if from is a directory, and fail if recurse is not set
 
-  override def head(file: String, maxBytes: Int): String = ???
+    // if from is a directory, recursively list files and move them one by one
+  }
 
-  override def put(file: String, contents: String, overwrite: Boolean): Boolean = ???
+  override def head(file: String, maxBytes: Int): String = {
+    w.dbfs().read(new ReadDbfsRequest().setPath(file).setLength(maxBytes)).toString
+  }
 
-  override def cacheTable(tableName: String): Boolean = ???
+  override def put(file: String, contents: String, overwrite: Boolean): Boolean = {
+    w.dbfs().put(new Put().setPath(file).setContents(contents).setOverwrite(overwrite))
+    // What should we return?
+    true
+  }
 
-  override def uncacheTable(tableName: String): Boolean = ???
+  override def cacheTable(tableName: String): Boolean = throw new NotImplementedError("cacheTable")
 
-  override def cacheFiles(files: String*): Boolean = ???
+  override def uncacheTable(tableName: String): Boolean = throw new NotImplementedError("uncacheTable")
 
-  override def uncacheFiles(files: String*): Boolean = ???
+  override def cacheFiles(files: String*): Boolean = throw new NotImplementedError("cacheFiles")
+
+  override def uncacheFiles(files: String*): Boolean = throw new NotImplementedError("uncacheFiles")
 
   override def mount(source: String, mountPoint: String, encryptionType: String, owner: String, extraConfigs: Map[String, String]): Boolean = ???
 
