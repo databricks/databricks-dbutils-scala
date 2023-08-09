@@ -1,19 +1,22 @@
 package com.databricks.sdk.scala
 package dbutils
 
-import com.databricks.dbutils_v1.DBUtilsHolder
+import org.apache.hadoop.fs.FileSystem
+import javax.annotation.Nullable
 
 object DBUtils {
-  lazy val INSTANCE = {
+  private lazy val INSTANCE = {
     try {
-      new ProxyDBUtilsImpl(DBUtilsHolder.dbutils)
+      new ProxyDBUtilsImpl()
     } catch {
       case _: NotImplementedError => new SdkDBUtilsImpl()
     }
   }
+
+  def getDBUtils: DBUtils = INSTANCE
 }
 
-trait DBUtils {
+trait DBUtils extends WithHelpMethods {
   val widgets: WidgetsUtils
   val meta: MetaUtils
   val fs: DbfsUtils
@@ -21,15 +24,22 @@ trait DBUtils {
   val secrets: SecretUtils
   val library: LibraryUtils
   val credentials: DatabricksCredentialUtils
-  // Is this necessary?
-  // val data: DataUtils
+  val data: DataUtils
   val jobs: JobsUtils
 }
 
-trait DbfsUtils {
+trait WithHelpMethods {
+  def help(): Unit
+
+  def help(moduleOrMethod: String): Unit
+
+  final def apply(): this.type = this
+}
+
+trait DbfsUtils extends Serializable with WithHelpMethods {
 
   // Is this necessary?
-  // def dbfs: FileSystem
+  def dbfs: FileSystem
 
   def ls(dir: String): Seq[FileInfo]
 
@@ -45,13 +55,14 @@ trait DbfsUtils {
 
   def put(file: String, contents: String, overwrite: Boolean = false): Boolean
 
-  def cacheTable(tableName: String): Boolean
-
-  def uncacheTable(tableName: String): Boolean
-
-  def cacheFiles(files: String*): Boolean
-
-  def uncacheFiles(files: String*): Boolean
+  // The *cache* methods are listed as no-op since Jan 1, 2017. Perhaps we should simply not include these.
+//  def cacheTable(tableName: String): Boolean
+//
+//  def uncacheTable(tableName: String): Boolean
+//
+//  def cacheFiles(files: String*): Boolean
+//
+//  def uncacheFiles(files: String*): Boolean
 
   // Notes:
   // - extraConfigs is introduced with Runtime 4.0/Runtime 3.6 (if there is a Runtime 3.6).
@@ -87,36 +98,43 @@ case class FileInfo(path: String, name: String, size: Long, modificationTime: Lo
 
 case class MountInfo(mountPoint: String, source: String, encryptionType: String)
 
-trait WidgetsUtils {
+trait WidgetsUtils extends Serializable with WithHelpMethods {
 
   def get(argName: String): String
 
-  def text(argName: String, defaultValue: String, label: String = null): Unit
+  // This has been marked as deprecated for so long.
+//  @deprecated(
+//    "Use dbutils.widgets.text() or dbutils.widgets.dropdown() to create a widget and " +
+//      "dbutils.widgets.get() to get its bound value."
+//  )
+//  def getArgument(argName: String, defaultValue: String): String
+
+  def text(argName: String, defaultValue: String, @Nullable label: String = null): Unit
 
   def dropdown(
       argName: String,
       defaultValue: String,
       choices: Seq[String],
-      label: String = null): Unit
+      @Nullable label: String = null): Unit
 
   def combobox(
       argName: String,
       defaultValue: String,
       choices: Seq[String],
-      label: String = null): Unit
+      @Nullable label: String = null): Unit
 
   def multiselect(
       argName: String,
       defaultValue: String,
       choices: Seq[String],
-      label: String = null): Unit
+      @Nullable label: String = null): Unit
 
   def remove(argName: String): Unit
 
   def removeAll(): Unit
 }
 
-trait MetaUtils {
+trait MetaUtils extends Serializable with WithHelpMethods {
 
   /**
    * Compiles a snippet of scala code under the given package name. If the compilation fails,
@@ -132,7 +150,7 @@ trait MetaUtils {
   def define(packageName: String, code: String): Boolean
 }
 
-trait NotebookUtils {
+trait NotebookUtils extends Serializable with WithHelpMethods {
   def exit(value: String): Unit
 
   def run(
@@ -141,12 +159,12 @@ trait NotebookUtils {
            arguments: scala.collection.Map[String, String] = Map.empty,
            __databricksInternalClusterSpec: String = null): String
 
-  // Should these be exposed? They would only work in the context of a notebook.
-  // def getContext(): CommandContext
-  // def setContext(ctx: CommandContext): Unit
+  // Apparently these are somewhat widely used.
+  def getContext(): CommandContext
+  def setContext(ctx: CommandContext): Unit
 }
 
-trait SecretUtils {
+trait SecretUtils extends Serializable with WithHelpMethods {
   def get(scope: String, key: String): String
   def getBytes(scope: String, key: String): Array[Byte]
   def list(scope: String): Seq[SecretMetadata]
@@ -157,33 +175,54 @@ case class SecretScope(name: String) {
   def getName(): String = name
 }
 
-trait LibraryUtils {
+trait LibraryUtils extends Serializable with WithHelpMethods {
 
   /**
    * Restart the python process to make sure some pip installed libraries could take effect.
    */
+  // We are really exposing this in Scala?
   def restartPython(): Unit
 }
 
-trait DatabricksCredentialUtils {
+trait DatabricksCredentialUtils extends Serializable with WithHelpMethods {
   def assumeRole(role: String): Boolean
-  // These methods return Java lists... we should expose them as Scala lists.
-  def showCurrentRole(): Seq[String]
-  def showRoles(): Seq[String]
+  def showCurrentRole(): java.util.List[String]
+  def showRoles(): java.util.List[String]
 }
 
-trait JobsUtils {
+trait JobsUtils extends Serializable with WithHelpMethods {
   def taskValues: TaskValuesUtils
 }
 
-trait TaskValuesUtils {
+trait TaskValuesUtils extends Serializable with WithHelpMethods {
   def set(key: String, value: Any): Unit
   // This is slightly different from the underlying DBUtils API, which returns Unit...
   def get(taskKey: String, key: String, default: Option[Any], debugValue: Option[Any]): Any
   def setJson(key: String, value: String): Unit
   def getJson(taskKey: String, key: String): Seq[String]
-
-// Again, should we expose these?
-//  def getContext(): CommandContext
-//  def setContext(context: CommandContext): Unit
+  // These seem to duplicate corresponding methods in the NotebookUtils trait.
+  def getContext(): CommandContext
+  def setContext(context: CommandContext): Unit
 }
+
+trait DataUtils extends Serializable with WithHelpMethods {
+
+  /**
+   * Summarize a DataFrame and visualize the statistics to get quick insights.
+   */
+  def summarize(df: Any, precise: Boolean = false): Unit
+}
+
+case class RunId private[dbutils](id: Long)
+case class CommandContext private[dbutils] (
+ // Fields set by jobs to track workflows.
+ rootRunId: Option[RunId],
+ currentRunId: Option[RunId],
+ // Unique command identifier that is injected by the driver.
+ jobGroup: Option[String],
+ // Attribution tags injected by the webapp.
+ tags: Map[String, String],
+ // Other fields that are propagated opaquely through the Jobs daemon and driver. We represent
+ // this as a string map to ensure that fields are propagated correctly through even old
+ // versions of Jobs daemon and driver packages.
+ extraContext: Map[String, String])
