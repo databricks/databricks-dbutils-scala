@@ -21,27 +21,30 @@ object Implicits {
 }
 
 private class DBUtilsWrapper(baseObj: AnyRef) {
-  def this() = this(getDbUtils)
+  def this() = this(DBUtilsWrapper.getDbUtils)
   def forField(field: String): DBUtilsWrapper = {
     val fieldObj = baseObj.getClass.getDeclaredField(field).get(baseObj)
     new DBUtilsWrapper(fieldObj)
   }
 
   def getUnderlying[T](field: String): T = baseObj.asInstanceOf[T]
+  def invoke[T](methodName: String, args: Seq[Any], convert: AnyRef => T = (x: AnyRef) => x.asInstanceOf[T]): T = {
+    val method = baseObj.getClass.getDeclaredMethod(methodName, args.map(_.getClass): _*)
+    convert(method.invoke(baseObj, args.map(_.asInstanceOf[Object]): _*))
+  }
+
+  def help(): Unit = invoke("help", Seq.empty)
+
+  def help(moduleOrMethod: String): Unit = invoke("help", Seq(moduleOrMethod))
+}
+
+object DBUtilsWrapper {
   private def getDbUtils: AnyRef = {
     val dbutilsHolderClass = Class.forName("com.databricks.dbutils_v1.DBUtilsHolder$")
     val dbutilsHolder = dbutilsHolderClass.getDeclaredField("MODULE$").get(null)
     dbutilsHolderClass.getDeclaredField("dbutils").get(dbutilsHolder)
   }
 
-  def invoke[T](methodName: String, args: Seq[Any], convert: AnyRef => T = _.asInstanceOf[T]): T = {
-    val method = baseObj.getClass.getDeclaredMethod(methodName, args.map(_.getClass): _*)
-    convert(method.invoke(baseObj, args: _*))
-  }
-
-  def help(): Unit = invoke("help", Seq.empty)
-
-  def help(moduleOrMethod: String): Unit = invoke("help", Seq(moduleOrMethod))
 }
 
 class ProxyDBUtilsImpl() extends DBUtils {

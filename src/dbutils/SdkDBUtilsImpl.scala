@@ -5,6 +5,7 @@ import scala.collection.JavaConverters._
 import com.databricks.sdk.WorkspaceClient
 import com.databricks.sdk.core.DatabricksConfig
 import com.databricks.sdk.service.files.{Delete, Put, ReadDbfsRequest}
+import org.apache.hadoop.fs.FileSystem
 
 class SdkDBUtilsImpl(config: DatabricksConfig) extends DBUtils {
   private val client = new WorkspaceClient(config)
@@ -18,6 +19,11 @@ class SdkDBUtilsImpl(config: DatabricksConfig) extends DBUtils {
   override val library: LibraryUtils = ???
   override val credentials: DatabricksCredentialUtils = ???
   override val jobs: JobsUtils = ???
+  override val data: DataUtils = ???
+
+  override def help(): Unit = ???
+
+  override def help(moduleOrMethod: String): Unit = ???
 }
 
 class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils {
@@ -44,9 +50,7 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils {
   }
 
   override def mv(from: String, to: String, recurse: Boolean): Boolean = {
-    // check if from is a directory, and fail if recurse is not set
-
-    // if from is a directory, recursively list files and move them one by one
+    ???
   }
 
   override def head(file: String, maxBytes: Int): String = {
@@ -59,14 +63,6 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils {
     true
   }
 
-  override def cacheTable(tableName: String): Boolean = throw new NotImplementedError("cacheTable")
-
-  override def uncacheTable(tableName: String): Boolean = throw new NotImplementedError("uncacheTable")
-
-  override def cacheFiles(files: String*): Boolean = throw new NotImplementedError("cacheFiles")
-
-  override def uncacheFiles(files: String*): Boolean = throw new NotImplementedError("uncacheFiles")
-
   override def mount(source: String, mountPoint: String, encryptionType: String, owner: String, extraConfigs: Map[String, String]): Boolean = ???
 
   override def updateMount(source: String, mountPoint: String, encryptionType: String, owner: String, extraConfigs: Map[String, String]): Boolean = ???
@@ -76,4 +72,10 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils {
   override def mounts(): Seq[MountInfo] = ???
 
   override def unmount(mountPoint: String): Boolean = ???
+
+  override def dbfs: FileSystem = ???
+
+  override def help(): Unit = ???
+
+  override def help(moduleOrMethod: String): Unit = ???
 }
