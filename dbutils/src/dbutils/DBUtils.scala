@@ -9,7 +9,7 @@ object DBUtils {
     try {
       new ProxyDBUtilsImpl()
     } catch {
-      case _: NotImplementedError => new SdkDBUtilsImpl()
+      case _: ClassNotFoundException => new SdkDBUtilsImpl()
     }
   }
 
@@ -17,15 +17,15 @@ object DBUtils {
 }
 
 trait DBUtils extends WithHelpMethods {
-  val widgets: WidgetsUtils
-  val meta: MetaUtils
-  val fs: DbfsUtils
-  val notebook: NotebookUtils
-  val secrets: SecretUtils
-  val library: LibraryUtils
-  val credentials: DatabricksCredentialUtils
-  val data: DataUtils
-  val jobs: JobsUtils
+  def widgets: WidgetsUtils
+  def meta: MetaUtils
+  def fs: DbfsUtils
+  def notebook: NotebookUtils
+  def secrets: SecretUtils
+  def library: LibraryUtils
+  def credentials: DatabricksCredentialUtils
+  def data: DataUtils
+  def jobs: JobsUtils
 }
 
 trait WithHelpMethods {

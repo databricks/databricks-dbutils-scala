@@ -3,79 +3,119 @@ package dbutils
 
 import scala.collection.JavaConverters._
 import com.databricks.sdk.WorkspaceClient
-import com.databricks.sdk.core.DatabricksConfig
-import com.databricks.sdk.service.files.{Delete, Put, ReadDbfsRequest}
+import com.databricks.sdk.core.{DatabricksConfig, DatabricksError, DatabricksException}
+import com.databricks.sdk.service.files.{Delete, Put, ReadDbfsRequest, UploadFileRequest}
 import org.apache.hadoop.fs.FileSystem
 
-class SdkDBUtilsImpl(config: DatabricksConfig) extends DBUtils {
+import java.io.{ByteArrayInputStream, InputStream}
+import java.nio.charset.StandardCharsets
+
+object SdkDbfsUtilsImpl {
+  def unsupportedMethod(methodName: String): Nothing = {
+    throw new UnsupportedOperationException(
+      s"Method $methodName is not supported in the SDK version of DBUtils."
+    )
+  }
+
+  def unsupportedField(methodName: String): Nothing = {
+    throw new UnsupportedOperationException(
+      s"Field $methodName is not supported in the SDK version of DBUtils."
+    )
+  }
+}
+
+/** Help is a no-op in the SDK version of DBUtils. */
+trait NoHelp extends WithHelpMethods {
+  override def help(): Unit = {}
+  override def help(moduleOrMethod: String): Unit = {}
+}
+
+class SdkDBUtilsImpl(config: DatabricksConfig) extends DBUtils with NoHelp {
   private val client = new WorkspaceClient(config)
   def this() = this(new DatabricksConfig())
 
-  override val widgets: WidgetsUtils = ???
-  override val meta: MetaUtils = ???
+  override def widgets: WidgetsUtils = SdkDbfsUtilsImpl.unsupportedField("widgets")
+  override def meta: MetaUtils = SdkDbfsUtilsImpl.unsupportedField("meta")
   override val fs: DbfsUtils = new SdkDbfsUtils(client)
-  override val notebook: NotebookUtils = ???
-  override val secrets: SecretUtils = ???
-  override val library: LibraryUtils = ???
-  override val credentials: DatabricksCredentialUtils = ???
-  override val jobs: JobsUtils = ???
-  override val data: DataUtils = ???
-
-  override def help(): Unit = ???
-
-  override def help(moduleOrMethod: String): Unit = ???
+  override def notebook: NotebookUtils = SdkDbfsUtilsImpl.unsupportedField("notebook")
+  override def secrets: SecretUtils = SdkDbfsUtilsImpl.unsupportedField("secrets")
+  override def library: LibraryUtils = SdkDbfsUtilsImpl.unsupportedField("library")
+  override def credentials: DatabricksCredentialUtils = SdkDbfsUtilsImpl.unsupportedField("credentials")
+  override def jobs: JobsUtils = SdkDbfsUtilsImpl.unsupportedField("jobs")
+  override def data: DataUtils = SdkDbfsUtilsImpl.unsupportedField("data")
 }
 
-class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils {
-  override def ls(dir: String): Seq[FileInfo] = w.dbfs().list(dir).asScala.toSeq.map { f =>
-    val maybeSlash = if (f.getIsDir) "/" else ""
-    val lastSegment = f.getPath.split("/").last
-    FileInfo(f.getPath + maybeSlash, lastSegment + maybeSlash, f.getFileSize, f.getModificationTime)
-  }
+class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
+  override def ls(dir: String): Seq[FileInfo] = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.ls")
 
   override def rm(dir: String, recurse: Boolean): Boolean = {
-    w.dbfs().delete(new Delete().setPath(dir).setRecursive(recurse))
+    if (recurse) {
+        throw new UnsupportedOperationException("Recursive delete is not yet supported in the SDK version of DBUtils.")
+    }
+    w.files().deleteFile(dir)
     // Should we list before and after? Swallow errors?
     true
   }
 
-  override def mkdirs(dir: String): Boolean = {
-    w.dbfs().mkdirs(dir)
-    // Should we list before and after? Swallow errors?
-    true
-  }
+  override def mkdirs(dir: String): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.mkdirs")
 
   override def cp(from: String, to: String, recurse: Boolean): Boolean = {
+    if (recurse) {
+      throw new UnsupportedOperationException("Recursive copy is not yet supported in the SDK version of DBUtils.")
+    }
     ???
   }
 
   override def mv(from: String, to: String, recurse: Boolean): Boolean = {
+    if (recurse) {
+      throw new UnsupportedOperationException("Recursive move is not yet supported in the SDK version of DBUtils.")
+    }
     ???
   }
 
   override def head(file: String, maxBytes: Int): String = {
-    w.dbfs().read(new ReadDbfsRequest().setPath(file).setLength(maxBytes)).toString
+    val fileStream = w.files().downloadFile(file)
+    val byteArray = new Array[Byte](maxBytes)
+    val numBytes = fileStream.read(byteArray)
+    // Assuming the file is UTF-8-encoded
+    new String(byteArray.slice(0, numBytes), StandardCharsets.UTF_8)
   }
 
   override def put(file: String, contents: String, overwrite: Boolean): Boolean = {
-    w.dbfs().put(new Put().setPath(file).setContents(contents).setOverwrite(overwrite))
-    // What should we return?
+    try {
+      w.files().uploadFile(
+        new UploadFileRequest()
+          .setFilePath(file)
+          .setOverwrite(overwrite)
+          .setBody(new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8)))
+      )
+    } catch {
+      case e: DatabricksError if e.getMessage == "No matching namespace can be found" =>
+        throw new IllegalArgumentException("requirement failed: Cannot upload to paths outside of /Volumes outside of DBR: " + file, e)
+    }
+    // What to return here?
     true
   }
 
-  override def mount(source: String, mountPoint: String, encryptionType: String, owner: String, extraConfigs: Map[String, String]): Boolean = ???
+  override def mount(
+      source: String,
+      mountPoint: String,
+      encryptionType: String,
+      owner: String,
+      extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.mount")
 
-  override def updateMount(source: String, mountPoint: String, encryptionType: String, owner: String, extraConfigs: Map[String, String]): Boolean = ???
+  override def updateMount(
+      source: String,
+      mountPoint: String,
+      encryptionType: String,
+      owner: String,
+      extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.updateMount")
 
-  override def refreshMounts(): Boolean = ???
+  override def refreshMounts(): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.refreshMounts")
 
-  override def mounts(): Seq[MountInfo] = ???
+  override def mounts(): Seq[MountInfo] = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.mounts")
 
-  override def unmount(mountPoint: String): Boolean = ???
+  override def unmount(mountPoint: String): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.unmount")
 
-  override def dbfs: FileSystem = ???
-
-  override def help(): Unit = ???
-
-  override def help(moduleOrMethod: String): Unit = ???
+  override def dbfs: FileSystem = SdkDbfsUtilsImpl.unsupportedField("dbutils.fs.dbfs")
 }
