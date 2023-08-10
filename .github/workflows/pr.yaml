@@ -1,0 +1,26 @@
+name: Run Mill Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  merge_group:
+    types: [checks_requested]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: .mill
+          key: ${{ runner.os }}-${{ hashFiles('.mill-version') }}
+
+      - name: Run Mill Tests
+        run: ./millw dbutils.test.test
+        env:
+          MILL_DOWNLOAD_PATH: .mill
