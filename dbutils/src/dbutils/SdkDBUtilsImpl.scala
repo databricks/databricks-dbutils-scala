@@ -63,14 +63,24 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
     if (recurse) {
       throw new UnsupportedOperationException("Recursive copy is not yet supported in the SDK version of DBUtils.")
     }
-    ???
+    mv(from, to, recurse, delete = false)
+  }
+
+  private def mv(from: String, to: String, recurse: Boolean, delete: Boolean): Boolean = {
+    val inputStream = w.files().downloadFile(from)
+    w.files().uploadFile(new UploadFileRequest().setFilePath(to).setBody(inputStream))
+    if (delete) {
+      w.files().deleteFile(from)
+    }
+    // What to return here?
+    true
   }
 
   override def mv(from: String, to: String, recurse: Boolean): Boolean = {
     if (recurse) {
       throw new UnsupportedOperationException("Recursive move is not yet supported in the SDK version of DBUtils.")
     }
-    ???
+    mv(from, to, recurse, delete = true)
   }
 
   override def head(file: String, maxBytes: Int): String = {

@@ -9,27 +9,28 @@ object DbfsTest extends TestSuite {
     val fs = dbutils.fs
     test("upload and download") {
       val testFilePath = s"${TestEnvironment.getTestDir}/upload_and_download.txt"
-      println(s"Test file: $testFilePath")
       val testFile = "Hello, world!"
       fs.put(testFilePath, testFile)
       val result = fs.head(testFilePath)
       assert(result == testFile)
     }
-//    if (TestEnvironment.IS_IN_DATABRICKS) {
-//      test("can upload inside of DBFS") {
-//        val testFilePath = s"/tmp/upload_and_download.txt"
-//        val testFile = "Hello, world!"
-//        fs.put(testFilePath, testFile)
-//        val result = fs.head(testFilePath)
-//        assert(result == testFile)
-//      }
-//    } else {
-//      test("cannot upload outside of DBFS") {
-//        val testFilePath = s"/tmp/upload_and_download.txt"
-//        val testFile = "Hello, world!"
-//        val e = intercept[IllegalArgumentException](fs.put(testFilePath, testFile))
-//        assert(e.getMessage == "requirement failed: Cannot upload to paths outside of /Volumes outside of DBR: /tmp/upload_and_download.txt")
-//      }
-//    }
+    test("cp non-recursive") {
+      val testFilePath = s"${TestEnvironment.getTestDir}/cp.txt"
+      val testFile = "Hello, world!"
+      fs.put(testFilePath, testFile)
+      fs.cp(testFilePath, s"${TestEnvironment.getTestDir}/cp2.txt")
+      val result = fs.head(s"${TestEnvironment.getTestDir}/cp2.txt")
+      assert(result == testFile)
+      // Assert that the original file still exists
+    }
+    test("mv") {
+      val testFilePath = s"${TestEnvironment.getTestDir}/mv.txt"
+      val testFile = "Hello, world!"
+      fs.put(testFilePath, testFile)
+      fs.mv(testFilePath, s"${TestEnvironment.getTestDir}/mv2.txt")
+      val result = fs.head(s"${TestEnvironment.getTestDir}/mv2.txt")
+      assert(result == testFile)
+      // Assert that the original file does not exist
+    }
   }
 }
