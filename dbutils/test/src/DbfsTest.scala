@@ -23,7 +23,7 @@ object DbfsTest extends TestSuite {
       assert(result == testFile)
       // Assert that the original file still exists
     }
-    test("mv") {
+    test("mv non-recursive") {
       val testFilePath = s"${TestEnvironment.getTestDir}/mv.txt"
       val testFile = "Hello, world!"
       fs.put(testFilePath, testFile)
@@ -31,6 +31,13 @@ object DbfsTest extends TestSuite {
       val result = fs.head(s"${TestEnvironment.getTestDir}/mv2.txt")
       assert(result == testFile)
       // Assert that the original file does not exist
+    }
+    test("delete non-recursive") {
+      val testFilePath = s"${TestEnvironment.getTestDir}/delete.txt"
+      val testFile = "Hello, world!"
+      fs.put(testFilePath, testFile)
+      fs.rm(testFilePath)
+      // Assert that the file does not exist
     }
   }
 }
