@@ -85,10 +85,14 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
 
   override def head(file: String, maxBytes: Int): String = {
     val fileStream = w.files().downloadFile(file)
-    val byteArray = new Array[Byte](maxBytes)
-    val numBytes = fileStream.read(byteArray)
-    // Assuming the file is UTF-8-encoded
-    new String(byteArray.slice(0, numBytes), StandardCharsets.UTF_8)
+    try {
+      val byteArray = new Array[Byte](maxBytes)
+      val numBytes = fileStream.read(byteArray)
+      // Assuming the file is UTF-8-encoded
+      new String(byteArray.slice(0, numBytes), StandardCharsets.UTF_8)
+    } finally {
+      fileStream.close()
+    }
   }
 
   override def put(file: String, contents: String, overwrite: Boolean): Boolean = {

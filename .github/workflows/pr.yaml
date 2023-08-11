@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Cache node modules
+      - name: Cache mill
         uses: actions/cache@v2
         with:
           path: .mill
