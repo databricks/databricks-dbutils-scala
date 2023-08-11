@@ -87,6 +87,7 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
     val fileStream = w.files().downloadFile(file)
     val byteArray = new Array[Byte](maxBytes)
     val numBytes = fileStream.read(byteArray)
+    fileStream.close()
     // Assuming the file is UTF-8-encoded
     new String(byteArray.slice(0, numBytes), StandardCharsets.UTF_8)
   }
