@@ -10,10 +10,17 @@
         <dependencySet>
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
-            <!-- we're creating the test-jar as an attachement -->
+            <!-- we're creating the test-jar as an attachment -->
             <useProjectAttachments>true</useProjectAttachments>
             <unpack>true</unpack>
             <scope>test</scope>
+            <unpackOptions>
+                <excludes>
+                    <!-- Exclude classes built for Java 17 -->
+                    <exclude>META-INF/versions/17/**</exclude>
+                    <exclude>META-INF/versions/19/**</exclude>
+                </excludes>
+            </unpackOptions>
         </dependencySet>
     </dependencySets>
 </assembly>
