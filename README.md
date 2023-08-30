@@ -1,28 +1,28 @@
-# Databricks SDK for Scala
+# Databricks Utilities (DBUtils) for Scala
 
 **Stability**: [Experimental](https://docs.databricks.com/release-notes/release-types.html)
 
-The Databricks SDK for Scala includes functionality to accelerate development with Java for the Databricks Lakehouse. Currently, the SDK for Scala includes support for the DBUtils interface provided in Databricks Runtime.
+The Databricks Utilities for Scala includes functionality to accelerate development with Scala for the Databricks Lakehouse.
 
-The SDK for Scala is implemented mostly using the core of the [SDK for Java](https://github.com/databricks/databricks-sdk-java). Consult that repository's README for information on authentication, logging, and how to make requests directly to the Databricks REST API.
+The Databricks Utilities for Scala library is implemented mostly using the core of the [SDK for Java](https://github.com/databricks/databricks-sdk-java). Consult that repository's README for information on authentication, logging, and how to make requests directly to the Databricks REST API.
 
 ## Contents
 
 - [Getting started](#getting-started)
-- [Migrating to SDK for Scala DBUtils](#migrating to-sdk-for-scala-dbutils)
+- [Migrating to DBUtils](#migrating to-sdk-for-scala-dbutils)
 - [Limitations when running outside of Databricks Runtime](#limitations-when-running-outside-of-databricks-runtime)
 - [Interface stability](#interface-stability)
 - [Disclaimer](#disclaimer)
 
 ## Getting started
 
-You can install Databricks SDK for Scala DBUtils by adding the following to your `pom.xml`:
+You can install Databricks Utilities for Scala by adding the following to your `pom.xml`:
 
 ```pom.xml
 <dependency>
   <groupId>com.databricks</groupId>
   <artifactId>databricks-sdk-dbutils</artifactId>
-  <version>0.0.1</version>
+  <version>0.1.0</version>
 </dependency>
 ```
 
@@ -41,7 +41,7 @@ object App {
 
 This code is now portable and can be run both within Databricks Runtime and in applications outside of Databricks Runtime. When this code is run in Databricks Runtime, the returned DBUtils instance proxies all function calls to the DBUtils instance provided by Databricks Runtime. When this code is run outside of Databricks Runtime, DBUtils uses the REST API to emulate the behavior of DBUtils within Databricks Runtime, providing a consistent interface for users to build applications that can run within and outside of Databricks Runtime.
 
-## Migrating to SDK for Scala DBUtils
+## Migrating to DBUtils
 
 ### Migrating from a Databricks notebook
 
@@ -78,7 +78,7 @@ The DBUtils interface provides many convenient utilities for interacting with Da
 
 ## Interface stability
 
-During the [Experimental](https://docs.databricks.com/release-notes/release-types.html) period, Databricks is actively working on stabilizing the Databricks SDK for Java's interfaces. API clients for all services are generated from specification files that are synchronized from the main platform. You are highly encouraged to pin the exact dependency version and read the [changelog](https://github.com/databricks/databricks-sdk-java/blob/main/CHANGELOG.md) where Databricks documents the changes. Databricks may have minor [documented](https://github.com/databricks/databricks-sdk-java/blob/main/CHANGELOG.md) backward-incompatible changes, such as renaming the methods or some type names to bring more consistency.
+During the [Experimental](https://docs.databricks.com/release-notes/release-types.html) period, Databricks is actively working on stabilizing the Databricks Utilities for Scala's interfaces. You are highly encouraged to pin the exact dependency version and read the [changelog](https://github.com/databricks/databricks-sdk-java/blob/main/CHANGELOG.md) where Databricks documents the changes. Databricks may have minor [documented](https://github.com/databricks/databricks-sdk-java/blob/main/CHANGELOG.md) backward-incompatible changes, such as renaming the methods or some type names to bring more consistency.
 
 ## Disclaimer
 - The product is in preview and not intended to be used in production;
