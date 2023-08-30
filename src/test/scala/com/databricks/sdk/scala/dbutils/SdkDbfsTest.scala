@@ -1,19 +1,13 @@
 package com.databricks.sdk.scala
 package dbutils
 
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
-
-class SdkDbfsTest extends AnyFlatSpec with Matchers {
-  val dbutils = DBUtils.getDBUtils()
-  val fs = dbutils.fs
-
+class SdkDbfsTest extends DBUtilsTestBase {
   "An SDKDBFS" should "not be able to upload outside of DBFS" in {
     val testFilePath = s"/tmp/upload_and_download.txt"
     val testFile = "Hello, world!"
 
     val e = intercept[IllegalArgumentException] {
-      fs.put(testFilePath, testFile)
+      dbutils.fs.put(testFilePath, testFile)
     }
 
     e.getMessage should be(
