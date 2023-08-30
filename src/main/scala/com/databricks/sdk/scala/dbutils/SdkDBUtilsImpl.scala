@@ -2,7 +2,7 @@ package com.databricks.sdk.scala
 package dbutils
 
 import com.databricks.sdk.WorkspaceClient
-import com.databricks.sdk.core.{ DatabricksConfig, DatabricksError }
+import com.databricks.sdk.core.{DatabricksConfig, DatabricksError}
 import com.databricks.sdk.service.files.UploadRequest
 
 import java.io.ByteArrayInputStream
@@ -111,18 +111,18 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
   }
 
   override def mount(
-    source: String,
-    mountPoint: String,
-    encryptionType: String,
-    owner: String,
-    extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.mount")
+      source: String,
+      mountPoint: String,
+      encryptionType: String,
+      owner: String,
+      extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.mount")
 
   override def updateMount(
-    source: String,
-    mountPoint: String,
-    encryptionType: String,
-    owner: String,
-    extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.updateMount")
+      source: String,
+      mountPoint: String,
+      encryptionType: String,
+      owner: String,
+      extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.updateMount")
 
   override def refreshMounts(): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.refreshMounts")
 

@@ -2,17 +2,17 @@ package com.databricks.sdk.scala.dbutils
 
 import com.databricks.sdk.WorkspaceClient
 import com.databricks.sdk.core.DatabricksConfig
-import com.databricks.sdk.service.catalog.{ CreateSchema, CreateVolumeRequestContent, VolumeType }
+import com.databricks.sdk.service.catalog.{CreateSchema, CreateVolumeRequestContent, VolumeType}
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.`type`.TypeReference
-import com.fasterxml.jackson.databind.{ DeserializationFeature, ObjectMapper, SerializationFeature }
-import org.scalatest.{ BeforeAndAfterAll, Tag }
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, SerializationFeature}
+import org.scalatest.{BeforeAndAfterAll, Tag}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import org.slf4j.{ Logger, LoggerFactory }
+import org.slf4j.{Logger, LoggerFactory}
 
 import java.nio.charset.StandardCharsets
-import java.nio.file.{ Files, Paths }
+import java.nio.file.{Files, Paths}
 import java.util.function.Supplier
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

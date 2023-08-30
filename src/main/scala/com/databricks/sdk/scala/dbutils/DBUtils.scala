@@ -87,18 +87,18 @@ trait DbfsUtils extends Serializable with WithHelpMethods {
   //   and newer versions since Runtime 3.4 is the lowest Runtime versions supported by
   //   Azure Databricks.
   def mount(
-    source: String,
-    mountPoint: String,
-    encryptionType: String = "",
-    owner: String = null,
-    extraConfigs: Map[String, String] = Map.empty[String, String]): Boolean
+      source: String,
+      mountPoint: String,
+      encryptionType: String = "",
+      owner: String = null,
+      extraConfigs: Map[String, String] = Map.empty[String, String]): Boolean
 
   def updateMount(
-    source: String,
-    mountPoint: String,
-    encryptionType: String = "",
-    owner: String = null,
-    extraConfigs: Map[String, String] = Map.empty[String, String]): Boolean
+      source: String,
+      mountPoint: String,
+      encryptionType: String = "",
+      owner: String = null,
+      extraConfigs: Map[String, String] = Map.empty[String, String]): Boolean
 
   def refreshMounts(): Boolean
 
@@ -159,10 +159,10 @@ trait NotebookUtils extends Serializable with WithHelpMethods {
   def exit(value: String): Unit
 
   def run(
-    path: String,
-    timeoutSeconds: Int,
-    arguments: scala.collection.Map[String, String] = Map.empty,
-    __databricksInternalClusterSpec: String = null): String
+      path: String,
+      timeoutSeconds: Int,
+      arguments: scala.collection.Map[String, String] = Map.empty,
+      __databricksInternalClusterSpec: String = null): String
 
   // Apparently these are somewhat widely used.
   def getContext(): CommandContext
@@ -218,14 +218,14 @@ trait DataUtils extends Serializable with WithHelpMethods {
 
 case class RunId private[dbutils] (id: Long)
 case class CommandContext private[dbutils] (
-  // Fields set by jobs to track workflows.
-  rootRunId: Option[RunId],
-  currentRunId: Option[RunId],
-  // Unique command identifier that is injected by the driver.
-  jobGroup: Option[String],
-  // Attribution tags injected by the webapp.
-  tags: Map[String, String],
-  // Other fields that are propagated opaquely through the Jobs daemon and driver. We represent
-  // this as a string map to ensure that fields are propagated correctly through even old
-  // versions of Jobs daemon and driver packages.
-  extraContext: Map[String, String])
+    // Fields set by jobs to track workflows.
+    rootRunId: Option[RunId],
+    currentRunId: Option[RunId],
+    // Unique command identifier that is injected by the driver.
+    jobGroup: Option[String],
+    // Attribution tags injected by the webapp.
+    tags: Map[String, String],
+    // Other fields that are propagated opaquely through the Jobs daemon and driver. We represent
+    // this as a string map to ensure that fields are propagated correctly through even old
+    // versions of Jobs daemon and driver packages.
+    extraContext: Map[String, String])
