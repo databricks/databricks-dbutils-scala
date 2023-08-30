@@ -20,8 +20,13 @@ object Implicits {
 
 private class DBUtilsWrapper(baseObj: AnyRef) {
   def this() = this(DBUtilsWrapper.getDbUtils)
+
   def forField(field: String): DBUtilsWrapper = {
-    val fieldObj = baseObj.getClass.getDeclaredField(field).get(baseObj)
+    val javaField = baseObj.getClass.getDeclaredField(field)
+    val accessible = javaField.isAccessible
+    javaField.setAccessible(true)
+    val fieldObj = javaField.get(baseObj)
+    javaField.setAccessible(accessible)
     new DBUtilsWrapper(fieldObj)
   }
 
@@ -40,8 +45,10 @@ object DBUtilsWrapper {
     val dbutilsHolderClass = Class.forName("com.databricks.dbutils_v1.DBUtilsHolder$")
     val dbutilsHolder = dbutilsHolderClass.getDeclaredField("MODULE$").get(null)
     val field = dbutilsHolderClass.getDeclaredField("dbutils0")
+    val accessible = field.isAccessible
     field.setAccessible(true)
     val threadLocal = field.get(dbutilsHolder).asInstanceOf[InheritableThreadLocal[AnyRef]]
+    field.setAccessible(accessible)
     threadLocal.get()
   }
 }
