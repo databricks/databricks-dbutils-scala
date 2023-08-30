@@ -1,18 +1,33 @@
 package com.databricks.sdk.scala
 package dbutils
 
+import com.databricks.sdk.core.DatabricksConfig
+
 import javax.annotation.Nullable
 
 object DBUtils {
-  private lazy val INSTANCE = {
-    try {
-      new ProxyDBUtilsImpl()
-    } catch {
-      case _: ClassNotFoundException => new SdkDBUtilsImpl()
-    }
+  private var INSTANCE: DBUtils = _
+
+  def getDBUtils: DBUtils = {
+    getDBUtils(new DatabricksConfig())
   }
 
-  def getDBUtils: DBUtils = INSTANCE
+  /** This method */
+  private[dbutils] def getDBUtils(databricksConfig: DatabricksConfig): DBUtils = {
+    if (INSTANCE == null) {
+      DBUtils.synchronized {
+        if (INSTANCE == null) {
+          val dbutils = try {
+            new ProxyDBUtilsImpl()
+          } catch {
+            case _: ClassNotFoundException => new SdkDBUtilsImpl(databricksConfig)
+          }
+          INSTANCE = dbutils
+        }
+      }
+    }
+    INSTANCE
+  }
 }
 
 trait DBUtils extends WithHelpMethods {

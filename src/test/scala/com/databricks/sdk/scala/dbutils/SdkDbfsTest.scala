@@ -3,6 +3,9 @@ package dbutils
 
 class SdkDbfsTest extends DBUtilsTestBase {
   "When outside of DBR, FSUtils" should "not be able to upload outside of /Volumes" in {
+    if (isInDbr) {
+      cancel("This test must only be run inside DBR")
+    }
     val testFilePath = s"/tmp/upload_and_download.txt"
     val testFile = "Hello, world!"
 
