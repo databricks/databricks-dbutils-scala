@@ -1,4 +1,4 @@
-name: Run Mill Tests
+name: PR Checks
 
 on:
   pull_request:
@@ -7,10 +7,15 @@ on:
     types: [checks_requested]
 
 jobs:
-  test:
+  fmt:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -22,4 +27,32 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Check formatting
-        run: mvn --errors spotless:check
+        run: mvn --errors spotless:check -Pscala-2.12
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        profile:
+          - scala-2.12
+          - scala-2.13
+
+    steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Run tests
+        run: mvn --errors test -P${{ matrix.profile }}

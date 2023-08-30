@@ -159,6 +159,15 @@
       <properties>
         <scala.version>2.12.10</scala.version>
       </properties>
+      <dependencies>
+        <!-- uTest -->
+        <dependency>
+          <groupId>com.lihaoyi</groupId>
+          <artifactId>utest_2.12</artifactId>
+          <version>0.8.1</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -197,6 +206,15 @@
       <properties>
         <scala.version>2.13.5</scala.version>
       </properties>
+      <dependencies>
+        <!-- uTest -->
+        <dependency>
+          <groupId>com.lihaoyi</groupId>
+          <artifactId>utest_2.13</artifactId>
+          <version>0.8.1</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>
