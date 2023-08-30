@@ -46,8 +46,9 @@
         <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/.github/workflows/pr.yml</url>
     </ciManagement>
 
-
     <properties>
+        <!-- Scala version is overridden by profiles -->
+        <scala.version>2.12.10</scala.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -58,6 +59,18 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
+        </dependency>
+        <!-- Nullable annotation -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+        <!-- Databricks SDK -->
+        <dependency>
+            <groupId>com.databricks</groupId>
+            <artifactId>databricks-sdk-java</artifactId>
+            <version>0.7.0</version>
         </dependency>
     </dependencies>
 

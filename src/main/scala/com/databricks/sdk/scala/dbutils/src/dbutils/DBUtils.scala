@@ -1,7 +1,6 @@
 package com.databricks.sdk.scala
 package dbutils
 
-import org.apache.hadoop.fs.FileSystem
 import javax.annotation.Nullable
 
 object DBUtils {
@@ -39,7 +38,7 @@ trait WithHelpMethods {
 trait DbfsUtils extends Serializable with WithHelpMethods {
 
   // Is this necessary?
-  def dbfs: FileSystem
+  // def dbfs: FileSystem
 
   def ls(dir: String): Seq[FileInfo]
 

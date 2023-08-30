@@ -3,8 +3,6 @@ package dbutils
 
 import Implicits._
 
-import org.apache.hadoop.fs.FileSystem
-
 object Implicits {
   implicit class ReflectiveLookup(o: AnyRef) {
     def getField[T](field: String): T = {
@@ -118,7 +116,6 @@ class ProxyDbfsUtils(fs: DBUtilsWrapper) extends DbfsUtils {
 
   override def help(moduleOrMethod: String): Unit = fs.help(moduleOrMethod)
 
-  override def dbfs: FileSystem = fs.forField("dbfs").getUnderlying("dbfs")
   override def ls(dir: String): Seq[FileInfo] = fs.invoke("ls", Seq(dir), p =>
     p.asInstanceOf[Seq[AnyRef]].map { p =>
       FileInfo(
