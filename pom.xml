@@ -71,6 +71,7 @@
       <artifactId>databricks-sdk-java</artifactId>
       <version>0.7.0</version>
     </dependency>
+    <!-- Slf4j implementation for tests -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-reload4j</artifactId>
@@ -78,6 +79,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <!-- Used for the supersafe compiler plugin for Scalatest -->
   <repositories>
     <repository>
       <releases>
@@ -92,7 +94,7 @@
   </repositories>
   <build>
     <plugins>
-      <!-- Maven Scala Plugin -->
+      <!-- Maven Scala Plugin with Supersafe compiler plugin -->
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
@@ -113,25 +115,6 @@
               <goal>compile</goal>
               <goal>testCompile</goal>
             </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- To ensure that Java classes can see Scala classes (if you mix both languages) -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <sources>
-                <source>src/main/scala</source>
-              </sources>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -218,7 +201,7 @@
           </execution>
         </executions>
       </plugin>
-      <!-- Make it an assembly jar so it can be transported to Databricks -->
+      <!-- Make it an assembly jar so it can be easily run on Databricks -->
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>3.6.0</version>
@@ -265,6 +248,7 @@
       </dependencies>
       <build>
         <plugins>
+          <!-- Only run formatter as part of the scala-2.12 profile -->
           <plugin>
             <groupId>com.diffplug.spotless</groupId>
             <artifactId>spotless-maven-plugin</artifactId>
