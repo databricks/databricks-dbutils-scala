@@ -18,7 +18,7 @@ private object SdkDbfsUtilsImpl {
 }
 
 /** Help is a no-op in the SDK version of DBUtils. */
-private trait NoHelp extends WithHelpMethods {
+trait NoHelp extends WithHelpMethods {
   override def help(): Unit = {}
   override def help(moduleOrMethod: String): Unit = {}
 }
