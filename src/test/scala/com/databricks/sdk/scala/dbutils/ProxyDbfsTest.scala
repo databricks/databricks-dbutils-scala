@@ -3,7 +3,7 @@ package dbutils
 
 class ProxyDbfsTest extends DBUtilsTestBase {
 
-  "A ProxyDBFS" should "be able to upload inside of DBFS" in {
+  "When inside DBR, FSUtils" should "be able to upload outside of /Volumes" in {
     val testFilePath = s"/tmp/upload_and_download.txt"
     val testFile = "Hello, world!"
     dbutils.fs.put(testFilePath, testFile)

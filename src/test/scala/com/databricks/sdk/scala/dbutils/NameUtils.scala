@@ -11,7 +11,7 @@ object NameUtils {
     new SecureRandom().nextBytes(bytes)
     val hexBuilder = new StringBuilder(length)
     for (b <- bytes) {
-      hexBuilder.append(String.format("%02x", b))
+      hexBuilder.append("%02x".format(b & 0xff))
     }
     hexBuilder.toString
   }

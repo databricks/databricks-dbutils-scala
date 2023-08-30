@@ -1,6 +1,8 @@
 package com.databricks.sdk.scala
 package dbutils
 
+import com.databricks.sdk.core.DatabricksException
+
 class DbfsTest extends DBUtilsTestBase {
   "DBFS" should "upload and download" in {
     val testFilePath = s"$testDir/upload_and_download.txt"
@@ -36,7 +38,7 @@ class DbfsTest extends DBUtilsTestBase {
     dbutils.fs.put(testFilePath, testFile)
     dbutils.fs.rm(testFilePath)
     // Assert that the file does not exist
-    assertThrows {
+    assertThrows[DatabricksException] {
       dbutils.fs.head(testFilePath)
     }
   }
