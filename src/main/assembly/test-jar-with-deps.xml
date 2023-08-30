@@ -16,7 +16,10 @@
             <scope>test</scope>
             <unpackOptions>
                 <excludes>
-                    <!-- Exclude classes built for Java 17 -->
+                    <!-- Exclude classes built for Java versions newer than Java 8 -->
+                    <exclude>module-info.class</exclude>
+                    <exclude>META-INF/versions/9/**</exclude>
+                    <exclude>META-INF/versions/11/**</exclude>
                     <exclude>META-INF/versions/17/**</exclude>
                     <exclude>META-INF/versions/19/**</exclude>
                 </excludes>
