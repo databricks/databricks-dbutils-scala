@@ -12,7 +12,8 @@ object DBUtils {
     getDBUtils(new DatabricksConfig())
   }
 
-  /** This method */
+  // This method is exposed for testing. In production, customers should simply call the no-arg
+  // version of this method.
   private[dbutils] def getDBUtils(databricksConfig: DatabricksConfig): DBUtils = {
     if (INSTANCE == null) {
       DBUtils.synchronized {
