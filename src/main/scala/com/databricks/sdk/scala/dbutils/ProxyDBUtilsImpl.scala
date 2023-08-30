@@ -5,13 +5,17 @@ import Implicits._
 
 private object Implicits {
   implicit class ReflectiveLookup(o: AnyRef) {
+
     /**
-     * Get a field from an object using reflection. This restores the the isAccessible state of the field
-     * after the field is accessed. This is very type-unsafe, so use with caution.
+     * Get a field from an object using reflection. This restores the the isAccessible state of the field after the
+     * field is accessed. This is very type-unsafe, so use with caution.
      *
-     * @param field the name of the field
-     * @tparam T the type of the field
-     * @return the value of the field
+     * @param field
+     *   the name of the field
+     * @tparam T
+     *   the type of the field
+     * @return
+     *   the value of the field
      */
     def getField[T](field: String): T = {
       val f = o.getClass.getDeclaredField(field)
@@ -28,7 +32,8 @@ private object Implicits {
 
 /**
  * A wrapper around DBUtils or any of its fields.
- * @param baseObj the object to wrap
+ * @param baseObj
+ *   the object to wrap
  */
 private class DBUtilsWrapper(baseObj: AnyRef) {
   def this() = this(DBUtilsWrapper.getDbUtils)
