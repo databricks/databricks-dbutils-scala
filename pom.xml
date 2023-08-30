@@ -46,11 +46,11 @@
     </repository>
   </distributionManagement>
   <properties>
+    <jackson.version>2.15.2</jackson.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <!-- Scala version is overridden by profiles -->
     <scala.version>2.12.10</scala.version>
-    <jackson.version>2.15.2</jackson.version>
   </properties>
   <dependencies>
     <!-- Scala Standard Library -->
@@ -71,7 +71,6 @@
       <artifactId>databricks-sdk-java</artifactId>
       <version>0.7.0</version>
     </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-reload4j</artifactId>
@@ -222,7 +221,8 @@
       <!-- Make it an assembly jar so it can be transported to Databricks -->
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.6.0</version> <!-- Use the appropriate version -->
+        <version>3.6.0</version>
+        <!-- Use the appropriate version -->
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/test-jar-with-deps.xml</descriptor>
@@ -230,10 +230,10 @@
         </configuration>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>single</goal>
             </goals>
+            <phase>package</phase>
           </execution>
         </executions>
       </plugin>

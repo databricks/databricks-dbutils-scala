@@ -3,7 +3,6 @@ package dbutils
 
 class ProxyDbfsTest extends DBUtilsTestBase {
 
-
   "When inside DBR, FSUtils" should "be able to upload outside of /Volumes" in {
     if (!isInDbr) {
       cancel("This test must only be run inside DBR")

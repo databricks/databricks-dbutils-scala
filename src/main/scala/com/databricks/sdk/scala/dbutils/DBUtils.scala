@@ -17,11 +17,12 @@ object DBUtils {
     if (INSTANCE == null) {
       DBUtils.synchronized {
         if (INSTANCE == null) {
-          val dbutils = try {
-            new ProxyDBUtilsImpl()
-          } catch {
-            case _: ClassNotFoundException => new SdkDBUtilsImpl(databricksConfig)
-          }
+          val dbutils =
+            try {
+              new ProxyDBUtilsImpl()
+            } catch {
+              case _: ClassNotFoundException => new SdkDBUtilsImpl(databricksConfig)
+            }
           INSTANCE = dbutils
         }
       }

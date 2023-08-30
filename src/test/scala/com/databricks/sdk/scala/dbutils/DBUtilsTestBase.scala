@@ -2,17 +2,17 @@ package com.databricks.sdk.scala.dbutils
 
 import com.databricks.sdk.WorkspaceClient
 import com.databricks.sdk.core.DatabricksConfig
-import com.databricks.sdk.service.catalog.{CreateSchema, CreateVolumeRequestContent, VolumeType}
+import com.databricks.sdk.service.catalog.{ CreateSchema, CreateVolumeRequestContent, VolumeType }
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.`type`.TypeReference
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, SerializationFeature}
+import com.fasterxml.jackson.databind.{ DeserializationFeature, ObjectMapper, SerializationFeature }
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 
 import java.nio.charset.StandardCharsets
-import java.nio.file.{Files, Paths}
+import java.nio.file.{ Files, Paths }
 import java.util.function.Supplier
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -55,9 +55,11 @@ class DBUtilsTestBase extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
     val config = new DatabricksConfig()
     val resolveMethod = classOf[DatabricksConfig].getDeclaredMethod("resolve", classOf[Supplier[Map[String, String]]])
     resolveMethod.setAccessible(true)
-    resolveMethod.invoke(config, new Supplier[java.util.Map[String, String]] {
-      override def get(): java.util.Map[String, String] = env
-    })
+    resolveMethod.invoke(
+      config,
+      new Supplier[java.util.Map[String, String]] {
+        override def get(): java.util.Map[String, String] = env
+      })
     logger.info("loaded workspace env from debug-env.conf")
     config
   }
@@ -72,7 +74,6 @@ class DBUtilsTestBase extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
       .setSerializationInclusion(JsonInclude.Include.NON_NULL)
   }
 
-
   override def beforeAll(): Unit = {
     super.beforeAll()
     val schemaName = NameUtils.uniqueName("dbutils")
@@ -84,8 +85,7 @@ class DBUtilsTestBase extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
         .setCatalogName("main")
         .setSchemaName(schemaName)
         .setName(volumeName)
-        .setVolumeType(VolumeType.MANAGED)
-    )
+        .setVolumeType(VolumeType.MANAGED))
     testDir = s"/Volumes/main/$schemaName/$volumeName"
     cleanup.prepend(() => w.volumes.delete(newVolume.getFullName))
   }
