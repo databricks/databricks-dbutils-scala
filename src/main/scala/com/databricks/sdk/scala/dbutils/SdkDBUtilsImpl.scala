@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import scala.collection.JavaConverters._
 
-object SdkDbfsUtilsImpl {
+private object SdkDbfsUtilsImpl {
   def unsupportedMethod(methodName: String): Nothing =
     throw new UnsupportedOperationException(s"Method $methodName is not supported in the SDK version of DBUtils.")
 
@@ -18,7 +18,7 @@ object SdkDbfsUtilsImpl {
 }
 
 /** Help is a no-op in the SDK version of DBUtils. */
-trait NoHelp extends WithHelpMethods {
+private trait NoHelp extends WithHelpMethods {
   override def help(): Unit = {}
   override def help(moduleOrMethod: String): Unit = {}
 }
@@ -38,7 +38,7 @@ class SdkDBUtilsImpl(config: DatabricksConfig) extends DBUtils with NoHelp {
   override def data: DataUtils = SdkDbfsUtilsImpl.unsupportedField("data")
 }
 
-class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
+private class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
   override def ls(dir: String): Seq[FileInfo] = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.ls")
 
   override def rm(file: String, recurse: Boolean): Boolean = {
@@ -131,7 +131,7 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
   override def unmount(mountPoint: String): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.unmount")
 }
 
-class SdkSecretsUtils(client: WorkspaceClient) extends SecretUtils with NoHelp {
+private class SdkSecretsUtils(client: WorkspaceClient) extends SecretUtils with NoHelp {
   override def get(scope: String, key: String): String =
     client.secrets().get(scope, key)
 

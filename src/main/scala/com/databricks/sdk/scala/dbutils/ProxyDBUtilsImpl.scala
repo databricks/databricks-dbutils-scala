@@ -3,8 +3,16 @@ package dbutils
 
 import Implicits._
 
-object Implicits {
+private object Implicits {
   implicit class ReflectiveLookup(o: AnyRef) {
+    /**
+     * Get a field from an object using reflection. This restores the the isAccessible state of the field
+     * after the field is accessed. This is very type-unsafe, so use with caution.
+     *
+     * @param field the name of the field
+     * @tparam T the type of the field
+     * @return the value of the field
+     */
     def getField[T](field: String): T = {
       val f = o.getClass.getDeclaredField(field)
       val accessible = f.isAccessible
@@ -18,6 +26,10 @@ object Implicits {
   }
 }
 
+/**
+ * A wrapper around DBUtils or any of its fields.
+ * @param baseObj the object to wrap
+ */
 private class DBUtilsWrapper(baseObj: AnyRef) {
   def this() = this(DBUtilsWrapper.getDbUtils)
 
@@ -36,7 +48,7 @@ private class DBUtilsWrapper(baseObj: AnyRef) {
   def help(moduleOrMethod: String): Unit = invoke("help", Seq(moduleOrMethod))
 }
 
-object DBUtilsWrapper {
+private object DBUtilsWrapper {
   private def getDbUtils: AnyRef = {
     val dbutilsHolderClass = Class.forName("com.databricks.dbutils_v1.DBUtilsHolder$")
     val dbutilsHolder = dbutilsHolderClass.getDeclaredField("MODULE$").get(null)
@@ -64,15 +76,13 @@ class ProxyDBUtilsImpl() extends DBUtils {
   override val data: DataUtils = new ProxyDataUtils(dbutils.forField("data"))
 }
 
-class ProxyWidgetUtils(widgets: DBUtilsWrapper) extends WidgetsUtils {
+private class ProxyWidgetUtils(widgets: DBUtilsWrapper) extends WidgetsUtils {
 
   override def help(): Unit = widgets.help()
 
   override def help(moduleOrMethod: String): Unit = widgets.help(moduleOrMethod)
 
   override def get(argName: String): String = widgets.invoke("get", Seq(argName))
-
-//  override def getArgument(argName: String, defaultValue: String): String = dbutils.invoke("getArgument", Seq(argName, defaultValue))
 
   override def text(argName: String, defaultValue: String, label: String): Unit =
     widgets.invoke("text", Seq(argName, defaultValue, label))
@@ -91,7 +101,7 @@ class ProxyWidgetUtils(widgets: DBUtilsWrapper) extends WidgetsUtils {
   override def removeAll(): Unit = widgets.invoke("removeAll", Seq.empty)
 }
 
-class ProxyMetaUtils(meta: DBUtilsWrapper) extends MetaUtils {
+private class ProxyMetaUtils(meta: DBUtilsWrapper) extends MetaUtils {
 
   override def help(): Unit = meta.help()
 
@@ -101,7 +111,7 @@ class ProxyMetaUtils(meta: DBUtilsWrapper) extends MetaUtils {
     meta.invoke("define", Seq(packageName, code))
 }
 
-class ProxyDbfsUtils(fs: DBUtilsWrapper) extends DbfsUtils {
+private class ProxyDbfsUtils(fs: DBUtilsWrapper) extends DbfsUtils {
 
   override def help(): Unit = fs.help()
 
@@ -167,7 +177,7 @@ class ProxyDbfsUtils(fs: DBUtilsWrapper) extends DbfsUtils {
   override def unmount(mountPoint: String): Boolean = fs.invoke("unmount", Seq(mountPoint))
 }
 
-class ProxyNotebookUtils(notebook: DBUtilsWrapper) extends NotebookUtils {
+private class ProxyNotebookUtils(notebook: DBUtilsWrapper) extends NotebookUtils {
   override def help(): Unit = notebook.help()
 
   override def help(moduleOrMethod: String): Unit = notebook.help(moduleOrMethod)
@@ -186,7 +196,7 @@ class ProxyNotebookUtils(notebook: DBUtilsWrapper) extends NotebookUtils {
   override def setContext(ctx: CommandContext): Unit = ???
 }
 
-class ProxySecretUtils(secrets: DBUtilsWrapper) extends SecretUtils {
+private class ProxySecretUtils(secrets: DBUtilsWrapper) extends SecretUtils {
 
   override def help(): Unit = secrets.help()
 
@@ -214,7 +224,7 @@ class ProxySecretUtils(secrets: DBUtilsWrapper) extends SecretUtils {
       })
 }
 
-class ProxyLibraryUtils(library: DBUtilsWrapper) extends LibraryUtils {
+private class ProxyLibraryUtils(library: DBUtilsWrapper) extends LibraryUtils {
 
   override def help(): Unit = library.help()
 
@@ -223,7 +233,7 @@ class ProxyLibraryUtils(library: DBUtilsWrapper) extends LibraryUtils {
   override def restartPython(): Unit = library.invoke("restartPython", Seq())
 }
 
-class ProxyDatabricksCredentialUtils(credentials: DBUtilsWrapper) extends DatabricksCredentialUtils {
+private class ProxyDatabricksCredentialUtils(credentials: DBUtilsWrapper) extends DatabricksCredentialUtils {
   override def help(): Unit = credentials.help()
 
   override def help(moduleOrMethod: String): Unit = credentials.help(moduleOrMethod)
@@ -235,7 +245,7 @@ class ProxyDatabricksCredentialUtils(credentials: DBUtilsWrapper) extends Databr
   override def showRoles(): java.util.List[String] = credentials.invoke("showRoles", Seq.empty)
 }
 
-class ProxyJobsUtils(jobs: DBUtilsWrapper) extends JobsUtils {
+private class ProxyJobsUtils(jobs: DBUtilsWrapper) extends JobsUtils {
   override def help(): Unit = jobs.help()
 
   override def help(moduleOrMethod: String): Unit = jobs.help(moduleOrMethod)
@@ -243,7 +253,7 @@ class ProxyJobsUtils(jobs: DBUtilsWrapper) extends JobsUtils {
   override def taskValues: TaskValuesUtils = new ProxyTaskValuesUtils(jobs.forField("taskValues"))
 }
 
-class ProxyTaskValuesUtils(taskValues: DBUtilsWrapper) extends TaskValuesUtils {
+private class ProxyTaskValuesUtils(taskValues: DBUtilsWrapper) extends TaskValuesUtils {
   override def help(): Unit = taskValues.help()
 
   override def help(moduleOrMethod: String): Unit = taskValues.help(moduleOrMethod)
@@ -278,7 +288,7 @@ class ProxyTaskValuesUtils(taskValues: DBUtilsWrapper) extends TaskValuesUtils {
   override def setContext(ctx: CommandContext): Unit = taskValues.invoke("setContext", Seq(ctx))
 }
 
-class ProxyDataUtils(data: DBUtilsWrapper) extends DataUtils {
+private class ProxyDataUtils(data: DBUtilsWrapper) extends DataUtils {
   override def help(): Unit = data.help()
 
   override def help(moduleOrMethod: String): Unit = data.help(moduleOrMethod)
