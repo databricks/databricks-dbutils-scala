@@ -25,7 +25,6 @@ private class DBUtilsWrapper(baseObj: AnyRef) {
     new DBUtilsWrapper(fieldObj)
   }
 
-  def getUnderlying[T](field: String): T = baseObj.asInstanceOf[T]
   def invoke[T](methodName: String, args: Seq[Any], convert: AnyRef => T = (x: AnyRef) => x.asInstanceOf[T]): T = {
     val method = baseObj.getClass.getDeclaredMethod(methodName, args.map(_.getClass): _*)
     convert(method.invoke(baseObj, args.map(_.asInstanceOf[Object]): _*))
@@ -40,9 +39,11 @@ object DBUtilsWrapper {
   private def getDbUtils: AnyRef = {
     val dbutilsHolderClass = Class.forName("com.databricks.dbutils_v1.DBUtilsHolder$")
     val dbutilsHolder = dbutilsHolderClass.getDeclaredField("MODULE$").get(null)
-    dbutilsHolderClass.getDeclaredField("dbutils").get(dbutilsHolder)
+    val field = dbutilsHolderClass.getDeclaredField("dbutils0")
+    field.setAccessible(true)
+    val threadLocal = field.get(dbutilsHolder).asInstanceOf[InheritableThreadLocal[AnyRef]]
+    threadLocal.get()
   }
-
 }
 
 class ProxyDBUtilsImpl() extends DBUtils {
