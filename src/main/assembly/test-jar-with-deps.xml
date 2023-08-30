@@ -8,14 +8,23 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
         <dependencySet>
+            <!-- All dependencies end up in the root directory of the assembly jar -->
             <outputDirectory>/</outputDirectory>
+            <!-- Include the project artifact (i.e. the main jar) -->
             <useProjectArtifact>true</useProjectArtifact>
-            <!-- we're creating the test-jar as an attachment -->
+            <!-- Include project attachments (i.e. the test jar) -->
             <useProjectAttachments>true</useProjectAttachments>
+            <!-- Unzip dependencies and merge classes into the assembly jar (otherwise, the assembly jar will contain jars) -->
             <unpack>true</unpack>
+            <!-- Include test dependencies, as we plan to run the tests from the test jar in Databricks -->
             <scope>test</scope>
+            <!-- To minimize conflicts when running tests on Databricks, we should only include jars here that
+             are explicitly not part of DBR. Otherwise, tests will hit java.lang.VerifyError when loading classes due
+             to mismatches between the versions of classes used at compile-time and runtime. -->
             <includes>
+                <!-- The SDK is not currently bundled in DBR. -->
                 <include>com.databricks:*</include>
+                <!-- These test libraries are not part of DBR. -->
                 <include>org.scalactic:*</include>
                 <include>org.scalatest:*</include>
             </includes>
