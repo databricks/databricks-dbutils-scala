@@ -1,7 +1,7 @@
 package com.databricks.sdk.scala
 package dbutils
 
-import java.util.{Objects, UUID}
+import java.util.{ Objects, UUID }
 
 object TestEnvironment {
   private val env = System.getenv()

@@ -1,184 +1,202 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.databricks</groupId>
-    <artifactId>databricks-dbutils-scala_${scala.version}</artifactId>
-    <version>0.1.0</version>
-
-    <name>DBUtils for Scala</name>
-    <description>
-        DBUtils for Scala simplifies interacting with various components of Databricks, such as the Databricks File
-        System (DBFS), Secret Scopes, Widgets, and other utilities.
-    </description>
-    <url>https://github.com/databricks/databricks-sdk-java</url>
-    <licenses>
-        <license>
-            <name>Databricks License</name>
-            <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/LICENSE</url>
-        </license>
-    </licenses>
-    <developers>
-        <developer>
-            <name>Miles Yucht</name>
-            <email>miles@databricks.com</email>
-        </developer>
-        <developer>
-            <name>Tanmay Rustagi</name>
-            <email>tanmay.rustagi@databricks.com</email>
-        </developer>
-    </developers>
-    <scm>
-        <connection>scm:git:https://github.com/databricks/databricks-dbutils-scala.git</connection>
-        <developerConnection>scm:git:https://github.com/databricks/databricks-dbutils-scala.git</developerConnection>
-        <tag>v${project.version}</tag>
-        <url>https://github.com/databricks/databricks-dbutils-scala/tree/v${project.version}</url>
-    </scm>
-    <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/databricks/databricks-dbutils-scala/issues</url>
-    </issueManagement>
-    <ciManagement>
-        <system>GitHub Actions</system>
-        <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/.github/workflows/pr.yml</url>
-    </ciManagement>
-
-    <properties>
-        <!-- Scala version is overridden by profiles -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.databricks</groupId>
+  <artifactId>databricks-dbutils-scala_${scala.version}</artifactId>
+  <version>0.1.0</version>
+  <name>DBUtils for Scala</name>
+  <description>DBUtils for Scala simplifies interacting with various components of Databricks, such as the Databricks File
+        System (DBFS), Secret Scopes, Widgets, and other utilities.</description>
+  <url>https://github.com/databricks/databricks-sdk-java</url>
+  <licenses>
+    <license>
+      <name>Databricks License</name>
+      <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/LICENSE</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Miles Yucht</name>
+      <email>miles@databricks.com</email>
+    </developer>
+    <developer>
+      <name>Tanmay Rustagi</name>
+      <email>tanmay.rustagi@databricks.com</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://github.com/databricks/databricks-dbutils-scala.git</connection>
+    <developerConnection>scm:git:https://github.com/databricks/databricks-dbutils-scala.git</developerConnection>
+    <tag>v${project.version}</tag>
+    <url>https://github.com/databricks/databricks-dbutils-scala/tree/v${project.version}</url>
+  </scm>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/databricks/databricks-dbutils-scala/issues</url>
+  </issueManagement>
+  <ciManagement>
+    <system>GitHub Actions</system>
+    <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/.github/workflows/pr.yml</url>
+  </ciManagement>
+  <distributionManagement>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <!-- Scala version is overridden by profiles -->
+    <scala.version>2.12.10</scala.version>
+  </properties>
+  <dependencies>
+    <!-- Scala Standard Library -->
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <!-- Nullable annotation -->
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>3.0.2</version>
+    </dependency>
+    <!-- Databricks SDK -->
+    <dependency>
+      <groupId>com.databricks</groupId>
+      <artifactId>databricks-sdk-java</artifactId>
+      <version>0.7.0</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <!-- Maven Scala Plugin -->
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>4.4.0</version>
+        <configuration>
+          <scalaVersion>${scala.version}</scalaVersion>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- To ensure that Java classes can see Scala classes (if you mix both languages) -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sources>
+                <source>src/main/scala</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Sign the artifacts -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+            <phase>verify</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Maven source and JavaDoc plugin to meet Maven Central's requirements -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>scala-2.12</id>
+      <properties>
         <scala.version>2.12.10</scala.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-
-    <dependencies>
-        <!-- Scala Standard Library -->
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala.version}</version>
-        </dependency>
-        <!-- Nullable annotation -->
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
-        </dependency>
-        <!-- Databricks SDK -->
-        <dependency>
-            <groupId>com.databricks</groupId>
-            <artifactId>databricks-sdk-java</artifactId>
-            <version>0.7.0</version>
-        </dependency>
-    </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
-    <profiles>
-        <profile>
-            <id>scala-2.12</id>
-            <properties>
-                <scala.version>2.12.13</scala.version>
-            </properties>
-        </profile>
-        <profile>
-            <id>scala-2.13</id>
-            <properties>
-                <scala.version>2.13.5</scala.version>
-            </properties>
-        </profile>
-    </profiles>
-
-    <build>
+      </properties>
+      <build>
         <plugins>
-            <!-- Maven Scala Plugin -->
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>4.4.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <scalaVersion>${scala.version}</scalaVersion>
-                </configuration>
-            </plugin>
-
-            <!-- To ensure that Java classes can see Scala classes (if you mix both languages) -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/main/scala</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Sign the artifacts -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Maven source and JavaDoc plugin to meet Maven Central's requirements -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <!-- 2.31.0 + version requires JRE 11 -->
+            <version>2.30.0</version>
+            <configuration>
+              <scala>
+                <scalafmt>
+                  <file>${project.basedir}/.scalafmt.conf</file>
+                  <!-- optional -->
+                </scalafmt>
+              </scala>
+              <pom>
+                <includes>
+                  <include>pom.xml</include>
+                </includes>
+                <sortPom>
+                  <expandEmptyElements>false</expandEmptyElements>
+                  <keepBlankLines>false</keepBlankLines>
+                  <sortDependencies/>
+                  <sortPlugins/>
+                  <sortProperties>true</sortProperties>
+                  <sortModules>true</sortModules>
+                  <indentSchemaLocation>true</indentSchemaLocation>
+                </sortPom>
+              </pom>
+            </configuration>
+          </plugin>
         </plugins>
-    </build>
+      </build>
+    </profile>
+    <profile>
+      <id>scala-2.13</id>
+      <properties>
+        <scala.version>2.13.5</scala.version>
+      </properties>
+    </profile>
+  </profiles>
 </project>

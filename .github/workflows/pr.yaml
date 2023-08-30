@@ -12,15 +12,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Cache mill
+      - name: Cache Maven packages
         uses: actions/cache@v2
         with:
-          path: .mill
-          key: ${{ runner.os }}-${{ hashFiles('.mill-version') }}
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
-      - name: Run Mill Tests
-        run: ./millw dbutils.test.test
-        env:
-          MILL_DOWNLOAD_PATH: .mill
+      - name: Check formatting
+        run: mvn --errors spotless:check
