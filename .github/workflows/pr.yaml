@@ -27,10 +27,12 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Check formatting
-        run: mvn --errors spotless:check
+        run: mvn --errors spotless:check -Pscala-2.12
 
   test:
     runs-on: ubuntu-latest
+    matrix:
+      profile: ["scala-2.12", "scala-2.13"]
 
     steps:
       - name: Set up JDK
@@ -49,4 +51,4 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Run tests
-        run: mvn --errors test
+        run: mvn --errors test -P${{ matrix.profile }}
