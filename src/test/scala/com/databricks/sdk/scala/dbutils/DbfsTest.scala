@@ -4,7 +4,7 @@ package dbutils
 import com.databricks.sdk.core.DatabricksException
 
 class DbfsTest extends DBUtilsTestBase {
-  "DBFS" should "upload and download" in {
+  "DBFS" should "upload and download" taggedAs Integration in {
     val testFilePath = s"$testDir/upload_and_download.txt"
     val testFile = "Hello, world!"
     dbutils.fs.put(testFilePath, testFile)
@@ -12,7 +12,7 @@ class DbfsTest extends DBUtilsTestBase {
     result should be(testFile)
   }
 
-  it should "cp non-recursive" in {
+  it should "cp non-recursive" taggedAs Integration in {
     val testFilePath = s"$testDir/cp.txt"
     val testFile = "Hello, world!"
     dbutils.fs.put(testFilePath, testFile)
@@ -22,7 +22,7 @@ class DbfsTest extends DBUtilsTestBase {
     // Assert that the original file still exists
   }
 
-  it should "mv non-recursive" in {
+  it should "mv non-recursive" taggedAs Integration in {
     val testFilePath = s"$testDir/mv.txt"
     val testFile = "Hello, world!"
     dbutils.fs.put(testFilePath, testFile)
@@ -32,7 +32,7 @@ class DbfsTest extends DBUtilsTestBase {
     // Assert that the original file does not exist
   }
 
-  it should "delete non-recursive" in {
+  it should "delete non-recursive" taggedAs Integration in {
     val testFilePath = s"$testDir/delete.txt"
     val testFile = "Hello, world!"
     dbutils.fs.put(testFilePath, testFile)

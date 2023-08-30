@@ -185,10 +185,23 @@
             <goals>
               <goal>test</goal>
             </goals>
+            <configuration>
+              <tagsToExclude>com.databricks.sdk.scala.dbutils.Integration</tagsToExclude>
+            </configuration>
+          </execution>
+          <execution>
+            <id>verify</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <phase>integration-test</phase>
+            <configuration>
+              <tagsToInclude>com.databricks.sdk.scala.dbutils.Integration</tagsToInclude>
+            </configuration>
           </execution>
         </executions>
       </plugin>
-      <!-- Generate a test jar for use in integration testing -->
+      <!-- Generate a test jar for use in functional testing -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -205,7 +218,6 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>3.6.0</version>
-        <!-- Use the appropriate version -->
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/test-jar-with-deps.xml</descriptor>
@@ -257,7 +269,7 @@
             <configuration>
               <scala>
                 <scalafmt>
-                  <file>${project.basedir}/.scalafmt.conf</file>
+                  <file>${project.basedir}/scalafmt.conf</file>
                   <!-- optional -->
                 </scalafmt>
               </scala>

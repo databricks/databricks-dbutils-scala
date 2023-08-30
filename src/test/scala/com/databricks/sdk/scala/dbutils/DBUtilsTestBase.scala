@@ -6,7 +6,7 @@ import com.databricks.sdk.service.catalog.{ CreateSchema, CreateVolumeRequestCon
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.{ DeserializationFeature, ObjectMapper, SerializationFeature }
-import org.scalatest.BeforeAndAfterAll
+import org.scalatest.{ BeforeAndAfterAll, Tag }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.slf4j.{ Logger, LoggerFactory }
@@ -98,3 +98,5 @@ class DBUtilsTestBase extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
     super.afterAll()
   }
 }
+
+object Integration extends Tag("com.databricks.sdk.scala.dbutils.Integration")
