@@ -20,12 +20,12 @@ object Implicits {
 
 private class DBUtilsWrapper(baseObj: AnyRef) {
   def this() = this(DBUtilsWrapper.getDbUtils)
+
   def forField(field: String): DBUtilsWrapper = {
-    val fieldObj = baseObj.getClass.getDeclaredField(field).get(baseObj)
+    val fieldObj = baseObj.getField[AnyRef](field)
     new DBUtilsWrapper(fieldObj)
   }
 
-  def getUnderlying[T](field: String): T = baseObj.asInstanceOf[T]
   def invoke[T](methodName: String, args: Seq[Any], convert: AnyRef => T = (x: AnyRef) => x.asInstanceOf[T]): T = {
     val method = baseObj.getClass.getDeclaredMethod(methodName, args.map(_.getClass): _*)
     convert(method.invoke(baseObj, args.map(_.asInstanceOf[Object]): _*))
@@ -40,9 +40,9 @@ object DBUtilsWrapper {
   private def getDbUtils: AnyRef = {
     val dbutilsHolderClass = Class.forName("com.databricks.dbutils_v1.DBUtilsHolder$")
     val dbutilsHolder = dbutilsHolderClass.getDeclaredField("MODULE$").get(null)
-    dbutilsHolderClass.getDeclaredField("dbutils").get(dbutilsHolder)
+    val threadLocal = dbutilsHolder.getField[InheritableThreadLocal[AnyRef]]("dbutils0")
+    threadLocal.get()
   }
-
 }
 
 class ProxyDBUtilsImpl() extends DBUtils {
@@ -139,19 +139,19 @@ class ProxyDbfsUtils(fs: DBUtilsWrapper) extends DbfsUtils {
 //  override def uncacheFiles(files: String*): Boolean = dbutils.invoke("uncacheFiles", Seq(files: _*))
 
   override def mount(
-    source: String,
-    mountPoint: String,
-    encryptionType: String = "",
-    owner: String = null,
-    extraConfigs: Map[String, String] = Map.empty): Boolean =
+      source: String,
+      mountPoint: String,
+      encryptionType: String = "",
+      owner: String = null,
+      extraConfigs: Map[String, String] = Map.empty): Boolean =
     fs.invoke("mount", Seq(source, mountPoint, encryptionType, owner, extraConfigs))
 
   override def updateMount(
-    source: String,
-    mountPoint: String,
-    encryptionType: String = "",
-    owner: String = null,
-    extraConfigs: Map[String, String]): Boolean =
+      source: String,
+      mountPoint: String,
+      encryptionType: String = "",
+      owner: String = null,
+      extraConfigs: Map[String, String]): Boolean =
     fs.invoke("updateMount", Seq(source, mountPoint, encryptionType, owner, extraConfigs))
 
   override def refreshMounts(): Boolean = fs.invoke("refreshMounts", Seq())
@@ -175,10 +175,10 @@ class ProxyNotebookUtils(notebook: DBUtilsWrapper) extends NotebookUtils {
   override def exit(value: String): Unit = notebook.invoke("exit", Seq(value))
 
   override def run(
-    path: String,
-    timeoutSeconds: Int,
-    arguments: collection.Map[String, String],
-    __databricksInternalClusterSpec: String): String =
+      path: String,
+      timeoutSeconds: Int,
+      arguments: collection.Map[String, String],
+      __databricksInternalClusterSpec: String): String =
     notebook.invoke("run", Seq(path, timeoutSeconds, arguments, __databricksInternalClusterSpec))
 
   override def getContext(): CommandContext = ???

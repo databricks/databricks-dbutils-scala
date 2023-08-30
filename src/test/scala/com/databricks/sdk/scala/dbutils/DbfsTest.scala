@@ -1,43 +1,45 @@
 package com.databricks.sdk.scala
 package dbutils
 
-import utest._
+import com.databricks.sdk.core.DatabricksException
 
-object DbfsTest extends TestSuite {
-  val tests = Tests {
-    val dbutils = DBUtils.getDBUtils()
-    val fs = dbutils.fs
-    test("upload and download") {
-      val testFilePath = s"${TestEnvironment.getTestDir}/upload_and_download.txt"
-      val testFile = "Hello, world!"
-      fs.put(testFilePath, testFile)
-      val result = fs.head(testFilePath)
-      assert(result == testFile)
-    }
-    test("cp non-recursive") {
-      val testFilePath = s"${TestEnvironment.getTestDir}/cp.txt"
-      val testFile = "Hello, world!"
-      fs.put(testFilePath, testFile)
-      fs.cp(testFilePath, s"${TestEnvironment.getTestDir}/cp2.txt")
-      val result = fs.head(s"${TestEnvironment.getTestDir}/cp2.txt")
-      assert(result == testFile)
-      // Assert that the original file still exists
-    }
-    test("mv non-recursive") {
-      val testFilePath = s"${TestEnvironment.getTestDir}/mv.txt"
-      val testFile = "Hello, world!"
-      fs.put(testFilePath, testFile)
-      fs.mv(testFilePath, s"${TestEnvironment.getTestDir}/mv2.txt")
-      val result = fs.head(s"${TestEnvironment.getTestDir}/mv2.txt")
-      assert(result == testFile)
-      // Assert that the original file does not exist
-    }
-    test("delete non-recursive") {
-      val testFilePath = s"${TestEnvironment.getTestDir}/delete.txt"
-      val testFile = "Hello, world!"
-      fs.put(testFilePath, testFile)
-      fs.rm(testFilePath)
-      // Assert that the file does not exist
+class DbfsTest extends DBUtilsTestBase {
+  "DBFS" should "upload and download" taggedAs Integration in {
+    val testFilePath = s"$testDir/upload_and_download.txt"
+    val testFile = "Hello, world!"
+    dbutils.fs.put(testFilePath, testFile)
+    val result = dbutils.fs.head(testFilePath)
+    result should be(testFile)
+  }
+
+  it should "cp non-recursive" taggedAs Integration in {
+    val testFilePath = s"$testDir/cp.txt"
+    val testFile = "Hello, world!"
+    dbutils.fs.put(testFilePath, testFile)
+    dbutils.fs.cp(testFilePath, s"$testDir/cp2.txt")
+    val result = dbutils.fs.head(s"$testDir/cp2.txt")
+    result should be(testFile)
+    // Assert that the original file still exists
+  }
+
+  it should "mv non-recursive" taggedAs Integration in {
+    val testFilePath = s"$testDir/mv.txt"
+    val testFile = "Hello, world!"
+    dbutils.fs.put(testFilePath, testFile)
+    dbutils.fs.mv(testFilePath, s"$testDir/mv2.txt")
+    val result = dbutils.fs.head(s"$testDir/mv2.txt")
+    result should be(testFile)
+    // Assert that the original file does not exist
+  }
+
+  it should "delete non-recursive" taggedAs Integration in {
+    val testFilePath = s"$testDir/delete.txt"
+    val testFile = "Hello, world!"
+    dbutils.fs.put(testFilePath, testFile)
+    dbutils.fs.rm(testFilePath)
+    // Assert that the file does not exist
+    assertThrows[DatabricksException] {
+      dbutils.fs.head(testFilePath)
     }
   }
 }

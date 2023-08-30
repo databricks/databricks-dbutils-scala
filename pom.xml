@@ -46,6 +46,7 @@
     </repository>
   </distributionManagement>
   <properties>
+    <jackson.version>2.15.2</jackson.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <!-- Scala version is overridden by profiles -->
@@ -70,16 +71,43 @@
       <artifactId>databricks-sdk-java</artifactId>
       <version>0.7.0</version>
     </dependency>
+    <!-- Slf4j implementation for tests -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-reload4j</artifactId>
+      <version>2.0.7</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+  <!-- Used for the supersafe compiler plugin for Scalatest -->
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>artima-releases</id>
+      <url>https://repo.artima.com/releases</url>
+    </repository>
+  </repositories>
   <build>
     <plugins>
-      <!-- Maven Scala Plugin -->
+      <!-- Maven Scala Plugin with Supersafe compiler plugin -->
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
         <version>4.4.0</version>
         <configuration>
           <scalaVersion>${scala.version}</scalaVersion>
+          <compilerPlugins>
+            <compilerPlugin>
+              <groupId>com.artima.supersafe</groupId>
+              <artifactId>supersafe_${scala.version}</artifactId>
+              <version>1.1.12</version>
+            </compilerPlugin>
+          </compilerPlugins>
         </configuration>
         <executions>
           <execution>
@@ -87,25 +115,6 @@
               <goal>compile</goal>
               <goal>testCompile</goal>
             </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- To ensure that Java classes can see Scala classes (if you mix both languages) -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <sources>
-                <source>src/main/scala</source>
-              </sources>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -151,25 +160,107 @@
           </execution>
         </executions>
       </plugin>
+      <!-- disable surefire -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+      <!-- enable scalatest -->
+      <plugin>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest-maven-plugin</artifactId>
+        <version>2.2.0</version>
+        <configuration>
+          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+          <junitxml>.</junitxml>
+          <filereports>WDF TestSuite.txt</filereports>
+        </configuration>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <tagsToExclude>com.databricks.sdk.scala.dbutils.Integration</tagsToExclude>
+            </configuration>
+          </execution>
+          <execution>
+            <id>verify</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <phase>integration-test</phase>
+            <configuration>
+              <tagsToInclude>com.databricks.sdk.scala.dbutils.Integration</tagsToInclude>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Generate a test jar for use in functional testing -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Make it an assembly jar so it can be easily run on Databricks -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.6.0</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/test-jar-with-deps.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <profiles>
     <profile>
       <id>scala-2.12</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
         <scala.version>2.12.10</scala.version>
       </properties>
       <dependencies>
-        <!-- uTest -->
+        <!-- ScalaTest 2.12 -->
         <dependency>
-          <groupId>com.lihaoyi</groupId>
-          <artifactId>utest_2.12</artifactId>
-          <version>0.8.1</version>
+          <groupId>org.scalactic</groupId>
+          <artifactId>scalactic_2.12</artifactId>
+          <version>3.2.16</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.scalatest</groupId>
+          <artifactId>scalatest_2.12</artifactId>
+          <version>3.2.16</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
       <build>
         <plugins>
+          <!-- Only run formatter as part of the scala-2.12 profile -->
           <plugin>
             <groupId>com.diffplug.spotless</groupId>
             <artifactId>spotless-maven-plugin</artifactId>
@@ -178,7 +269,7 @@
             <configuration>
               <scala>
                 <scalafmt>
-                  <file>${project.basedir}/.scalafmt.conf</file>
+                  <file>${project.basedir}/scalafmt.conf</file>
                   <!-- optional -->
                 </scalafmt>
               </scala>
@@ -207,11 +298,17 @@
         <scala.version>2.13.5</scala.version>
       </properties>
       <dependencies>
-        <!-- uTest -->
+        <!-- ScalaTest 2.13 -->
         <dependency>
-          <groupId>com.lihaoyi</groupId>
-          <artifactId>utest_2.13</artifactId>
-          <version>0.8.1</version>
+          <groupId>org.scalactic</groupId>
+          <artifactId>scalactic_2.13</artifactId>
+          <version>3.2.16</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.scalatest</groupId>
+          <artifactId>scalatest_2.13</artifactId>
+          <version>3.2.16</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
