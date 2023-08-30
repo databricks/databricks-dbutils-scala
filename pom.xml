@@ -70,6 +70,13 @@
       <artifactId>databricks-sdk-java</artifactId>
       <version>0.7.0</version>
     </dependency>
+    <!-- uTest -->
+    <dependency>
+      <groupId>com.lihaoyi</groupId>
+      <artifactId>utest_2.12</artifactId>
+      <version>0.8.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
