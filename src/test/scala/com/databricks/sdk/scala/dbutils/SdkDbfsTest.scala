@@ -16,7 +16,8 @@ class SdkDbfsTest extends AnyFlatSpec with Matchers {
       fs.put(testFilePath, testFile)
     }
 
-    e.getMessage should be ("requirement failed: Cannot upload to paths outside of /Volumes outside of DBR: /tmp/upload_and_download.txt")
+    e.getMessage should be(
+      "requirement failed: Cannot upload to paths outside of /Volumes outside of DBR: /tmp/upload_and_download.txt")
   }
 
   // More tests to verify that we can't copy/move outside or across UC interface or delete outside of DBFS

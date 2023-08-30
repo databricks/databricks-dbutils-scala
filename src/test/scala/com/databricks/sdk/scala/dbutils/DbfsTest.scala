@@ -9,7 +9,7 @@ class DbfsTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
   val dbutils = DBUtils.getDBUtils()
   val fs = dbutils.fs
 
-  "A DBFS" should "upload and download" in {
+  "DBFS" should "upload and download" in {
     val testFilePath = s"${TestEnvironment.getTestDir}/upload_and_download.txt"
     val testFile = "Hello, world!"
     fs.put(testFilePath, testFile)
