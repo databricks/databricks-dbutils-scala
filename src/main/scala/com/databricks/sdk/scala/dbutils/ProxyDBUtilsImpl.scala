@@ -48,7 +48,6 @@ object DBUtilsWrapper {
 class ProxyDBUtilsImpl() extends DBUtils {
   private val dbutils = new DBUtilsWrapper()
 
-
   override def help(): Unit = dbutils.help()
 
   override def help(moduleOrMethod: String): Unit = dbutils.help(moduleOrMethod)
@@ -59,7 +58,8 @@ class ProxyDBUtilsImpl() extends DBUtils {
   override val notebook: NotebookUtils = new ProxyNotebookUtils(dbutils.forField("notebook"))
   override val secrets: SecretUtils = new ProxySecretUtils(dbutils.forField("secrets"))
   override val library: LibraryUtils = new ProxyLibraryUtils(dbutils.forField("library"))
-  override val credentials: DatabricksCredentialUtils = new ProxyDatabricksCredentialUtils(dbutils.forField("credentials"))
+  override val credentials: DatabricksCredentialUtils = new ProxyDatabricksCredentialUtils(
+    dbutils.forField("credentials"))
   override val jobs: JobsUtils = new ProxyJobsUtils(dbutils.forField("jobs"))
   override val data: DataUtils = new ProxyDataUtils(dbutils.forField("data"))
 }
@@ -77,23 +77,14 @@ class ProxyWidgetUtils(widgets: DBUtilsWrapper) extends WidgetsUtils {
   override def text(argName: String, defaultValue: String, label: String): Unit =
     widgets.invoke("text", Seq(argName, defaultValue, label))
 
-  override def dropdown(
-      argName: String,
-      defaultValue: String,
-      choices: Seq[String],
-      label: String): Unit = widgets.invoke("dropdown", Seq(argName, defaultValue, choices, label))
+  override def dropdown(argName: String, defaultValue: String, choices: Seq[String], label: String): Unit =
+    widgets.invoke("dropdown", Seq(argName, defaultValue, choices, label))
 
-  override def combobox(
-      argName: String,
-      defaultValue: String,
-      choices: Seq[String],
-      label: String): Unit = widgets.invoke("combobox", Seq(argName, defaultValue, choices, label))
+  override def combobox(argName: String, defaultValue: String, choices: Seq[String], label: String): Unit =
+    widgets.invoke("combobox", Seq(argName, defaultValue, choices, label))
 
-  override def multiselect(
-      argName: String,
-      defaultValue: String,
-      choices: Seq[String],
-      label: String): Unit = widgets.invoke("multiselect", Seq(argName, defaultValue, choices, label))
+  override def multiselect(argName: String, defaultValue: String, choices: Seq[String], label: String): Unit =
+    widgets.invoke("multiselect", Seq(argName, defaultValue, choices, label))
 
   override def remove(argName: String): Unit = widgets.invoke("remove", Seq(argName))
 
@@ -116,15 +107,13 @@ class ProxyDbfsUtils(fs: DBUtilsWrapper) extends DbfsUtils {
 
   override def help(moduleOrMethod: String): Unit = fs.help(moduleOrMethod)
 
-  override def ls(dir: String): Seq[FileInfo] = fs.invoke("ls", Seq(dir), p =>
-    p.asInstanceOf[Seq[AnyRef]].map { p =>
-      FileInfo(
-        p.getField("path"),
-        p.getField("name"),
-        p.getField("size"),
-        p.getField("modificationTime"))
-    }
-  )
+  override def ls(dir: String): Seq[FileInfo] = fs.invoke(
+    "ls",
+    Seq(dir),
+    p =>
+      p.asInstanceOf[Seq[AnyRef]].map { p =>
+        FileInfo(p.getField("path"), p.getField("name"), p.getField("size"), p.getField("modificationTime"))
+      })
 
   override def rm(dir: String, recurse: Boolean): Boolean = fs.invoke("rm", Seq(dir, recurse))
 
@@ -150,31 +139,30 @@ class ProxyDbfsUtils(fs: DBUtilsWrapper) extends DbfsUtils {
 //  override def uncacheFiles(files: String*): Boolean = dbutils.invoke("uncacheFiles", Seq(files: _*))
 
   override def mount(
-      source: String,
-      mountPoint: String,
-      encryptionType: String = "",
-      owner: String = null,
-      extraConfigs: Map[String, String] = Map.empty): Boolean =
+    source: String,
+    mountPoint: String,
+    encryptionType: String = "",
+    owner: String = null,
+    extraConfigs: Map[String, String] = Map.empty): Boolean =
     fs.invoke("mount", Seq(source, mountPoint, encryptionType, owner, extraConfigs))
 
   override def updateMount(
-      source: String,
-      mountPoint: String,
-      encryptionType: String = "",
-      owner: String = null,
-      extraConfigs: Map[String, String]): Boolean =
+    source: String,
+    mountPoint: String,
+    encryptionType: String = "",
+    owner: String = null,
+    extraConfigs: Map[String, String]): Boolean =
     fs.invoke("updateMount", Seq(source, mountPoint, encryptionType, owner, extraConfigs))
 
   override def refreshMounts(): Boolean = fs.invoke("refreshMounts", Seq())
 
-  override def mounts(): Seq[MountInfo] = fs.invoke("mounts", Seq.empty, m =>
-    m.asInstanceOf[Seq[AnyRef]].map { m =>
-      MountInfo(
-        m.getField("mountPoint"),
-        m.getField("source"),
-        m.getField("encryptionType"))
-    }
-  )
+  override def mounts(): Seq[MountInfo] = fs.invoke(
+    "mounts",
+    Seq.empty,
+    m =>
+      m.asInstanceOf[Seq[AnyRef]].map { m =>
+        MountInfo(m.getField("mountPoint"), m.getField("source"), m.getField("encryptionType"))
+      })
 
   override def unmount(mountPoint: String): Boolean = fs.invoke("unmount", Seq(mountPoint))
 }
@@ -187,10 +175,10 @@ class ProxyNotebookUtils(notebook: DBUtilsWrapper) extends NotebookUtils {
   override def exit(value: String): Unit = notebook.invoke("exit", Seq(value))
 
   override def run(
-      path: String,
-      timeoutSeconds: Int,
-      arguments: collection.Map[String, String],
-      __databricksInternalClusterSpec: String): String =
+    path: String,
+    timeoutSeconds: Int,
+    arguments: collection.Map[String, String],
+    __databricksInternalClusterSpec: String): String =
     notebook.invoke("run", Seq(path, timeoutSeconds, arguments, __databricksInternalClusterSpec))
 
   override def getContext(): CommandContext = ???
@@ -209,18 +197,21 @@ class ProxySecretUtils(secrets: DBUtilsWrapper) extends SecretUtils {
   override def getBytes(scope: String, key: String): Array[Byte] =
     secrets.invoke("getBytes", Seq(scope, key))
 
-  override def list(scope: String): Seq[SecretMetadata] = secrets.invoke("list", Seq(scope),
+  override def list(scope: String): Seq[SecretMetadata] = secrets.invoke(
+    "list",
+    Seq(scope),
     metadatas =>
       metadatas.asInstanceOf[Seq[AnyRef]].map { m =>
         SecretMetadata(m.getField("key"))
-      }
-  )
+      })
 
-  override def listScopes(): Seq[SecretScope] = secrets.invoke("listScopes", Seq(), scopes =>
-    scopes.asInstanceOf[Seq[AnyRef]].map { s =>
-      SecretScope( s.getField("name"))
-    }
-  )
+  override def listScopes(): Seq[SecretScope] = secrets.invoke(
+    "listScopes",
+    Seq(),
+    scopes =>
+      scopes.asInstanceOf[Seq[AnyRef]].map { s =>
+        SecretScope(s.getField("name"))
+      })
 }
 
 class ProxyLibraryUtils(library: DBUtilsWrapper) extends LibraryUtils {
@@ -259,11 +250,7 @@ class ProxyTaskValuesUtils(taskValues: DBUtilsWrapper) extends TaskValuesUtils {
 
   override def set(key: String, value: Any): Unit = taskValues.invoke("set", Seq(key, value))
 
-  override def get(
-      taskKey: String,
-      key: String,
-      default: Option[Any],
-      debugValue: Option[Any]): Any =
+  override def get(taskKey: String, key: String, default: Option[Any], debugValue: Option[Any]): Any =
     taskValues.invoke("get", Seq(taskKey, key, default, debugValue))
 
   override def setJson(key: String, value: String): Unit =
@@ -272,18 +259,21 @@ class ProxyTaskValuesUtils(taskValues: DBUtilsWrapper) extends TaskValuesUtils {
   override def getJson(taskKey: String, key: String): Seq[String] =
     taskValues.invoke("getJson", Seq(taskKey, key))
 
-  override def getContext(): CommandContext = taskValues.invoke("getContext", Seq.empty, c => {
-    val internalRootRunIdOpt: Option[AnyRef] = c.getField("rootRunId")
-    val internalRootRunId = internalRootRunIdOpt.map(id => id.getField[Long]("id"))
-    val internalCurrentRunIdOpt = c.getField[Option[AnyRef]]("currentRunId")
-    val internalCurrentRunId = internalCurrentRunIdOpt.map(id => id.getField[Long]("id"))
-    CommandContext(
-      rootRunId = internalRootRunId.map(RunId),
-      currentRunId = internalCurrentRunId.map(RunId),
-      jobGroup = c.getField("jobGroup"),
-      tags = c.getField("tags"),
-      extraContext = c.getField("extraContext"))
-  })
+  override def getContext(): CommandContext = taskValues.invoke(
+    "getContext",
+    Seq.empty,
+    c => {
+      val internalRootRunIdOpt: Option[AnyRef] = c.getField("rootRunId")
+      val internalRootRunId = internalRootRunIdOpt.map(id => id.getField[Long]("id"))
+      val internalCurrentRunIdOpt = c.getField[Option[AnyRef]]("currentRunId")
+      val internalCurrentRunId = internalCurrentRunIdOpt.map(id => id.getField[Long]("id"))
+      CommandContext(
+        rootRunId = internalRootRunId.map(RunId),
+        currentRunId = internalCurrentRunId.map(RunId),
+        jobGroup = c.getField("jobGroup"),
+        tags = c.getField("tags"),
+        extraContext = c.getField("extraContext"))
+    })
 
   override def setContext(ctx: CommandContext): Unit = taskValues.invoke("setContext", Seq(ctx))
 }

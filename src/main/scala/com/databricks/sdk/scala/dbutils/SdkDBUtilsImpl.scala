@@ -2,7 +2,7 @@ package com.databricks.sdk.scala
 package dbutils
 
 import com.databricks.sdk.WorkspaceClient
-import com.databricks.sdk.core.{DatabricksConfig, DatabricksError}
+import com.databricks.sdk.core.{ DatabricksConfig, DatabricksError }
 import com.databricks.sdk.service.files.UploadRequest
 
 import java.io.ByteArrayInputStream
@@ -10,17 +10,11 @@ import java.nio.charset.StandardCharsets
 import scala.collection.JavaConverters._
 
 object SdkDbfsUtilsImpl {
-  def unsupportedMethod(methodName: String): Nothing = {
-    throw new UnsupportedOperationException(
-      s"Method $methodName is not supported in the SDK version of DBUtils."
-    )
-  }
+  def unsupportedMethod(methodName: String): Nothing =
+    throw new UnsupportedOperationException(s"Method $methodName is not supported in the SDK version of DBUtils.")
 
-  def unsupportedField(methodName: String): Nothing = {
-    throw new UnsupportedOperationException(
-      s"Field $methodName is not supported in the SDK version of DBUtils."
-    )
-  }
+  def unsupportedField(methodName: String): Nothing =
+    throw new UnsupportedOperationException(s"Field $methodName is not supported in the SDK version of DBUtils.")
 }
 
 /** Help is a no-op in the SDK version of DBUtils. */
@@ -49,7 +43,7 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
 
   override def rm(file: String, recurse: Boolean): Boolean = {
     if (recurse) {
-        throw new UnsupportedOperationException("Recursive delete is not yet supported in the SDK version of DBUtils.")
+      throw new UnsupportedOperationException("Recursive delete is not yet supported in the SDK version of DBUtils.")
     }
     w.files().delete(file)
     // Should we list before and after? Swallow errors?
@@ -100,33 +94,35 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
 
   override def put(file: String, contents: String, overwrite: Boolean): Boolean = {
     try {
-      w.files().upload(
-        new UploadRequest()
-          .setFilePath(file)
-          .setOverwrite(overwrite)
-          .setContents(new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8)))
-      )
+      w.files()
+        .upload(
+          new UploadRequest()
+            .setFilePath(file)
+            .setOverwrite(overwrite)
+            .setContents(new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8))))
     } catch {
       case e: DatabricksError if e.getMessage == "No matching namespace can be found" =>
-        throw new IllegalArgumentException("requirement failed: Cannot upload to paths outside of /Volumes outside of DBR: " + file, e)
+        throw new IllegalArgumentException(
+          "requirement failed: Cannot upload to paths outside of /Volumes outside of DBR: " + file,
+          e)
     }
     // What to return here?
     true
   }
 
   override def mount(
-      source: String,
-      mountPoint: String,
-      encryptionType: String,
-      owner: String,
-      extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.mount")
+    source: String,
+    mountPoint: String,
+    encryptionType: String,
+    owner: String,
+    extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.mount")
 
   override def updateMount(
-      source: String,
-      mountPoint: String,
-      encryptionType: String,
-      owner: String,
-      extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.updateMount")
+    source: String,
+    mountPoint: String,
+    encryptionType: String,
+    owner: String,
+    extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.updateMount")
 
   override def refreshMounts(): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.refreshMounts")
 
@@ -136,23 +132,19 @@ class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
 }
 
 class SdkSecretsUtils(client: WorkspaceClient) extends SecretUtils with NoHelp {
-  override def get(scope: String, key: String): String = {
+  override def get(scope: String, key: String): String =
     client.secrets().get(scope, key)
-  }
 
-  override def getBytes(scope: String, key: String): Array[Byte] = {
+  override def getBytes(scope: String, key: String): Array[Byte] =
     client.secrets().getBytes(scope, key)
-  }
 
-  override def list(scope: String): Seq[SecretMetadata] = {
+  override def list(scope: String): Seq[SecretMetadata] =
     client.secrets().listSecrets(scope).asScala.toSeq.map { secret =>
       SecretMetadata(secret.getKey)
     }
-  }
 
-  override def listScopes(): Seq[SecretScope] = {
+  override def listScopes(): Seq[SecretScope] =
     client.secrets().listScopes().asScala.toSeq.map { scope =>
       SecretScope(scope.getName)
     }
-  }
 }
