@@ -78,18 +78,6 @@
       <version>2.0.7</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-      <version>${jackson.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <repositories>
     <repository>
@@ -274,6 +262,12 @@
           <version>3.2.16</version>
           <scope>test</scope>
         </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.module</groupId>
+          <artifactId>jackson-module-scala_2.12</artifactId>
+          <version>${jackson.version}</version>
+          <scope>test</scope>
+        </dependency>
       </dependencies>
       <build>
         <plugins>
@@ -325,6 +319,12 @@
           <groupId>org.scalatest</groupId>
           <artifactId>scalatest_2.13</artifactId>
           <version>3.2.16</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.module</groupId>
+          <artifactId>jackson-module-scala_2.13</artifactId>
+          <version>${jackson.version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
