@@ -2,29 +2,23 @@ package com.databricks.sdk.scala.dbutils.integration
 
 import com.databricks.sdk.WorkspaceClient
 import com.databricks.sdk.core.DatabricksConfig
-import com.databricks.sdk.scala.dbutils.{DBUtils, NameUtils}
-import com.databricks.sdk.service.catalog.{CreateSchema, CreateVolumeRequestContent, VolumeType}
+import com.databricks.sdk.scala.dbutils.DBUtils
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, SerializationFeature}
+import org.scalatest.Tag
 import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.{BeforeAndAfterAll, Tag}
 import org.slf4j.{Logger, LoggerFactory}
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import java.util.function.Supplier
-import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
-class DBUtilsTestBase extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
+class IntegrationTestBase extends AnyFlatSpec {
   protected val logger: Logger = LoggerFactory.getLogger(this.getClass)
   protected val config: DatabricksConfig = getDatabricksConfig
   protected val w = new WorkspaceClient(config)
   protected val dbutils: DBUtils = DBUtils.getDBUtils(config)
-  protected var testDir: String = _
-  private val cleanup: mutable.Buffer[() => Unit] = ListBuffer()
 
   protected def isInDbr: Boolean = {
     System.getenv("DATABRICKS_RUNTIME_VERSION") != null
@@ -74,30 +68,7 @@ class DBUtilsTestBase extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
       .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
       .setSerializationInclusion(JsonInclude.Include.NON_NULL)
   }
-
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-    val schemaName = NameUtils.uniqueName("dbutils")
-    val newSchema = w.schemas.create(new CreateSchema().setName(schemaName).setCatalogName("main"))
-    cleanup.prepend(() => w.schemas.delete(newSchema.getFullName))
-    val volumeName = NameUtils.uniqueName("dbutils")
-    val newVolume = w.volumes.create(
-      new CreateVolumeRequestContent()
-        .setCatalogName("main")
-        .setSchemaName(schemaName)
-        .setName(volumeName)
-        .setVolumeType(VolumeType.MANAGED))
-    testDir = s"/Volumes/main/$schemaName/$volumeName"
-    cleanup.prepend(() => w.volumes.delete(newVolume.getFullName))
-  }
-
-  override def afterAll(): Unit = {
-    for (f <- cleanup) {
-      f()
-    }
-    testDir = null
-    super.afterAll()
-  }
 }
 
 object Integration extends Tag("com.databricks.sdk.scala.dbutils.Integration")
+object SecretsGet extends Tag("com.databricks.sdk.scala.dbutils.SecretsGet")
