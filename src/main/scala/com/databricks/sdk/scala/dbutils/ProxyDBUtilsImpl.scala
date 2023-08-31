@@ -34,27 +34,6 @@ private object Implicits {
   }
 }
 
-/**
- * A wrapper around DBUtils or any of its fields.
- * @param baseObj
- *   the object to wrap
- */
-private class DBUtilsWrapper(baseObj: AnyRef) {
-  def forField(field: String): DBUtilsWrapper = {
-    val fieldObj = baseObj.getField[AnyRef](field)
-    new DBUtilsWrapper(fieldObj)
-  }
-
-  def invoke[T](methodName: String, args: Seq[Any], convert: AnyRef => T = (x: AnyRef) => x.asInstanceOf[T]): T = {
-    val method = baseObj.getClass.getDeclaredMethod(methodName, args.map(_.getClass): _*)
-    convert(method.invoke(baseObj, args.map(_.asInstanceOf[Object]): _*))
-  }
-
-  def help(): Unit = invoke("help", Seq.empty)
-
-  def help(moduleOrMethod: String): Unit = invoke("help", Seq(moduleOrMethod))
-}
-
 private class MethodCallAdapter(
     val handleArgs: Seq[AnyRef] => Seq[AnyRef] = identity,
     val convertResult: AnyRef => AnyRef = identity)
@@ -80,8 +59,8 @@ private object ProxyDBUtilsImpl {
         (proxy: scala.Any, method: Method, args: Array[AnyRef]) => {
           val args0 = if (args == null) Seq.empty else args.toSeq
           val converter = converters.getOrElse(method.getName, MethodCallAdapter.IDENTITY)
-          val convertedArgs = converters(method.getName).handleArgs(args0)
-          val backendMethod = backendInstance.getClass.getMethod(method.getName, args.map(_.getClass): _*)
+          val convertedArgs = converter.handleArgs(args0)
+          val backendMethod = backendInstance.getClass.getMethod(method.getName, convertedArgs.map(_.getClass): _*)
           val result = backendMethod.invoke(backendInstance, convertedArgs: _*)
           converter.convertResult(result)
         })
@@ -133,16 +112,16 @@ private object ProxyDBUtilsImpl {
 
 class ProxyDBUtilsImpl private[dbutils] (baseObj: AnyRef) extends DBUtils {
   def this() = this(ProxyDBUtilsImpl.getDbUtils)
-  private val dbutils = new DBUtilsWrapper(baseObj)
+  private val dbutils = getProxyInstance[DBUtils](baseObj)
 
   override def help(): Unit = dbutils.help()
 
   override def help(moduleOrMethod: String): Unit = dbutils.help(moduleOrMethod)
 
-  override val widgets: WidgetsUtils = getProxyInstance[WidgetsUtils](dbutils.forField("widgets"))
-  override val meta: MetaUtils = getProxyInstance[MetaUtils](dbutils.forField("meta"))
+  override val widgets: WidgetsUtils = getProxyInstance[WidgetsUtils](baseObj.getField("widgets"))
+  override val meta: MetaUtils = getProxyInstance[MetaUtils](baseObj.getField("meta"))
   override val fs: DbfsUtils = getProxyInstance[DbfsUtils](
-    dbutils.forField("fs"),
+    baseObj.getField("fs"),
     Map(
       "ls" ->
         new MethodCallAdapter(convertResult = { p =>
@@ -157,13 +136,13 @@ class ProxyDBUtilsImpl private[dbutils] (baseObj: AnyRef) extends DBUtils {
           }
         })))
   override val notebook: NotebookUtils = getProxyInstance[NotebookUtils](
-    dbutils.forField("notebook"),
+    baseObj.getField("notebook"),
     Map(
       "getContext" -> new MethodCallAdapter(convertResult = ProxyDBUtilsImpl.fromInternalCommandContext),
       "setContext" -> new MethodCallAdapter(handleArgs = args =>
         Seq(ProxyDBUtilsImpl.toInternalCommandContext(args.head)))))
   override val secrets: SecretUtils = getProxyInstance[SecretUtils](
-    dbutils.forField("secrets"),
+    baseObj.getField("secrets"),
     Map(
       "list" -> new MethodCallAdapter(convertResult = { metadatas =>
         metadatas.asInstanceOf[Seq[AnyRef]].map { m =>
@@ -175,20 +154,21 @@ class ProxyDBUtilsImpl private[dbutils] (baseObj: AnyRef) extends DBUtils {
           SecretScope(s.getField("name"))
         }
       })))
-  override val library: LibraryUtils = getProxyInstance[LibraryUtils](dbutils.forField("library"))
+  override val library: LibraryUtils = getProxyInstance[LibraryUtils](baseObj.getField("library"))
   override val credentials: DatabricksCredentialUtils =
-    getProxyInstance[DatabricksCredentialUtils](dbutils.forField("credentials"))
-  override val jobs: JobsUtils = new ProxyJobsUtils(dbutils.forField("jobs"))
-  override val data: DataUtils = getProxyInstance[DataUtils](dbutils.forField("data"))
+    getProxyInstance[DatabricksCredentialUtils](baseObj.getField("credentials"))
+  override val jobs: JobsUtils = new ProxyJobsUtils(baseObj.getField("jobs"))
+  override val data: DataUtils = getProxyInstance[DataUtils](baseObj.getField("data"))
 }
 
-private class ProxyJobsUtils(jobs: DBUtilsWrapper) extends JobsUtils {
-  override def help(): Unit = jobs.help()
+private class ProxyJobsUtils(jobs: AnyRef) extends JobsUtils {
+  private val jobsProxy = getProxyInstance[JobsUtils](jobs)
+  override def help(): Unit = jobsProxy.help()
 
-  override def help(moduleOrMethod: String): Unit = jobs.help(moduleOrMethod)
+  override def help(moduleOrMethod: String): Unit = jobsProxy.help(moduleOrMethod)
 
   override def taskValues: TaskValuesUtils = getProxyInstance[TaskValuesUtils](
-    jobs.forField("taskValues"),
+    jobs.getField("taskValues"),
     Map(
       "getContext" -> new MethodCallAdapter(convertResult = ProxyDBUtilsImpl.fromInternalCommandContext),
       "setContext" -> new MethodCallAdapter(handleArgs = args =>
