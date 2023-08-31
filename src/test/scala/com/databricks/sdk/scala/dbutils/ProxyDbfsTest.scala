@@ -65,7 +65,8 @@ class ProxyDbfsTest extends AnyFlatSpec {
 
   "dbutils.notebook.getContext()" should "call getContext() and convert the response" in {
     val proxyNotebook = mock(classOf[NotebookUtils])
-    when(proxyNotebook.getContext()).thenReturn(CommandContext(Some(RunId(0)), Some(RunId(1)), Some("test"), Map("a" -> "b"), Map("c" -> "d")))
+    when(proxyNotebook.getContext())
+      .thenReturn(CommandContext(Some(RunId(0)), Some(RunId(1)), Some("test"), Map("a" -> "b"), Map("c" -> "d")))
     val proxyBackend = TestDBUtils(notebook = proxyNotebook)
     val proxyDbUtils = new ProxyDBUtilsImpl(proxyBackend)
     val res = proxyDbUtils.notebook.getContext()
