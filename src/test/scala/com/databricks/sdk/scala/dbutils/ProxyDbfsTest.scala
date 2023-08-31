@@ -62,4 +62,34 @@ class ProxyDbfsTest extends AnyFlatSpec {
     assert(res === "test")
     verify(proxyTaskValues).get("taskKey", "key", Some("value"), Some("value"))
   }
+
+  "dbutils.notebook.getContext()" should "call getContext() and convert the response" in {
+    val proxyNotebook = mock(classOf[NotebookUtils])
+    when(proxyNotebook.getContext()).thenReturn(CommandContext(Some(RunId(0)), Some(RunId(1)), Some("test"), Map("a" -> "b"), Map("c" -> "d")))
+    val proxyBackend = TestDBUtils(notebook = proxyNotebook)
+    val proxyDbUtils = new ProxyDBUtilsImpl(proxyBackend)
+    val res = proxyDbUtils.notebook.getContext()
+    assert(res === CommandContext(Some(RunId(0)), Some(RunId(1)), Some("test"), Map("a" -> "b"), Map("c" -> "d")))
+    verify(proxyNotebook).getContext()
+  }
+
+  "dbutils.secrets.list()" should "call list() and convert the response" in {
+    val proxySecrets = mock(classOf[SecretUtils])
+    when(proxySecrets.list("test")).thenReturn(Seq(SecretMetadata("testKey")))
+    val proxyBackend = TestDBUtils(secrets = proxySecrets)
+    val proxyDbUtils = new ProxyDBUtilsImpl(proxyBackend)
+    val res = proxyDbUtils.secrets.list("test")
+    assert(res === Seq(SecretMetadata("testKey")))
+    verify(proxySecrets).list("test")
+  }
+
+  "dbutils.secrets.listScopes()" should "call listScopes() and convert the response" in {
+    val proxySecrets = mock(classOf[SecretUtils])
+    when(proxySecrets.listScopes()).thenReturn(Seq(SecretScope("testScope")))
+    val proxyBackend = TestDBUtils(secrets = proxySecrets)
+    val proxyDbUtils = new ProxyDBUtilsImpl(proxyBackend)
+    val res = proxyDbUtils.secrets.listScopes()
+    assert(res === Seq(SecretScope("testScope")))
+    verify(proxySecrets).listScopes()
+  }
 }

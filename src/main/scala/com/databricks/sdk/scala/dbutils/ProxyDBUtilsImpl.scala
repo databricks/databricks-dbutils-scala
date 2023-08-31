@@ -4,7 +4,7 @@ package dbutils
 import Implicits._
 import com.databricks.sdk.scala.dbutils.ProxyDBUtilsImpl.getProxyInstance
 
-import java.lang.reflect.{Method, Proxy, UndeclaredThrowableException}
+import java.lang.reflect.{Method, Proxy}
 import scala.reflect.{classTag, ClassTag}
 
 private object Implicits {
@@ -99,6 +99,7 @@ private object ProxyDBUtilsImpl {
       throw new IllegalArgumentException(s"Expected CommandContext, got ${c.getClass}")
     }
     val commandContext = c.asInstanceOf[CommandContext]
+    // This class is defined in DBR.
     val runIdClass = Class.forName("com.databricks.backend.common.storage.elasticspark.RunId")
     val rootRunIdOpt = commandContext.rootRunId.map { id =>
       runIdClass.getConstructor(classOf[Long]).newInstance(new java.lang.Long(id.id))
@@ -106,6 +107,7 @@ private object ProxyDBUtilsImpl {
     val currentRunIdOpt = commandContext.currentRunId.map { id =>
       runIdClass.getConstructor(classOf[Long]).newInstance(new java.lang.Long(id.id))
     }
+    // This class is defined in DBR.
     val commandContextClass = Class.forName("com.databricks.backend.common.rpc.CommandContext")
     commandContextClass
       .getConstructor(
