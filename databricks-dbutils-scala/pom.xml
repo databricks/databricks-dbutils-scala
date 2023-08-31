@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.databricks</groupId>
+  <artifactId>databricks-dbutils-scala_${scala.version}</artifactId>
+  <version>0.1.0</version>
+  <name>DBUtils for Scala</name>
+  <description>DBUtils for Scala simplifies interacting with various components of Databricks, such as the Databricks File
+        System (DBFS), Secret Scopes, Widgets, and other utilities.</description>
+  <url>https://github.com/databricks/databricks-sdk-java</url>
+  <licenses>
+    <license>
+      <name>Databricks License</name>
+      <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/LICENSE</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Miles Yucht</name>
+      <email>miles@databricks.com</email>
+    </developer>
+    <developer>
+      <name>Tanmay Rustagi</name>
+      <email>tanmay.rustagi@databricks.com</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://github.com/databricks/databricks-dbutils-scala.git</connection>
+    <developerConnection>scm:git:https://github.com/databricks/databricks-dbutils-scala.git</developerConnection>
+    <tag>v${project.version}</tag>
+    <url>https://github.com/databricks/databricks-dbutils-scala/tree/v${project.version}</url>
+  </scm>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/databricks/databricks-dbutils-scala/issues</url>
+  </issueManagement>
+  <ciManagement>
+    <system>GitHub Actions</system>
+    <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/.github/workflows/pr.yml</url>
+  </ciManagement>
+  <distributionManagement>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  <properties>
+    <jackson.version>2.15.2</jackson.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <!-- Scala version is overridden by profiles -->
+    <scala.version>2.12.10</scala.version>
+  </properties>
+  <dependencies>
+    <!-- Scala Standard Library -->
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <!-- Nullable annotation -->
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>3.0.2</version>
+    </dependency>
+    <!-- Databricks SDK -->
+    <dependency>
+      <groupId>com.databricks</groupId>
+      <artifactId>databricks-sdk-java</artifactId>
+      <version>0.7.0</version>
+    </dependency>
+    <!-- Slf4j implementation for tests -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-reload4j</artifactId>
+      <version>2.0.7</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- For mocking dependencies -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <!-- Version 5 drops support for Java 8 -->
+      <version>4.11.0</version>
+    </dependency>
+  </dependencies>
+  <!-- Used for the supersafe compiler plugin for Scalatest -->
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>artima-releases</id>
+      <url>https://repo.artima.com/releases</url>
+    </repository>
+  </repositories>
+  <build>
+    <plugins>
+      <!-- Maven Scala Plugin with Supersafe compiler plugin -->
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>4.4.0</version>
+        <configuration>
+          <scalaVersion>${scala.version}</scalaVersion>
+          <compilerPlugins>
+            <compilerPlugin>
+              <groupId>com.artima.supersafe</groupId>
+              <artifactId>supersafe_${scala.version}</artifactId>
+              <version>1.1.12</version>
+            </compilerPlugin>
+          </compilerPlugins>
+        </configuration>
+        <executions>
+          <execution>
+            <id>scala-compile</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>scala-test-compile</id>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>prepare-release-assets</id>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <phase>prepare-package</phase>
+          </execution>
+          <execution>
+            <id>generate-doc-jar</id>
+            <goals>
+              <goal>doc-jar</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Sign the artifacts -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.6</version>
+        <configuration>
+          <!-- Prevent gpg from using pinentry programs -->
+          <gpgArguments>
+            <arg>--pinentry-mode</arg>
+            <arg>loopback</arg>
+          </gpgArguments>
+        </configuration>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+            <phase>verify</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- disable surefire -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+      <!-- enable scalatest -->
+      <plugin>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest-maven-plugin</artifactId>
+        <version>2.2.0</version>
+        <configuration>
+          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+          <junitxml>.</junitxml>
+          <filereports>WDF TestSuite.txt</filereports>
+        </configuration>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <tagsToExclude>com.databricks.sdk.scala.dbutils.Integration</tagsToExclude>
+            </configuration>
+          </execution>
+          <execution>
+            <id>verify</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <phase>integration-test</phase>
+            <configuration>
+              <tagsToInclude>com.databricks.sdk.scala.dbutils.Integration</tagsToInclude>
+              <!-- Secrets Get is not working for now -->
+              <tagsToExclude>com.databricks.sdk.scala.dbutils.SecretsGet</tagsToExclude>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Generate a test jar for use in functional testing -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Make it an assembly jar so it can be easily run on Databricks -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.6.0</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/test-jar-with-deps.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>scala-2.12</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <scala.version>2.12.10</scala.version>
+      </properties>
+      <dependencies>
+        <!-- ScalaTest 2.12 -->
+        <dependency>
+          <groupId>org.scalactic</groupId>
+          <artifactId>scalactic_2.12</artifactId>
+          <version>3.2.16</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.scalatest</groupId>
+          <artifactId>scalatest_2.12</artifactId>
+          <version>3.2.16</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <!-- Only run formatter as part of the scala-2.12 profile -->
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <!-- 2.31.0 + version requires JRE 11 -->
+            <version>2.30.0</version>
+          </plugin>
+          <!-- Maven source plugin to meet Maven Central's requirements -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.3.0</version>
+            <executions>
+              <execution>
+                <id>generate-source-jar</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- Release plugin -->
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.13</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>scala-2.13</id>
+      <properties>
+        <scala.version>2.13.5</scala.version>
+      </properties>
+      <dependencies>
+        <!-- ScalaTest 2.13 -->
+        <dependency>
+          <groupId>org.scalactic</groupId>
+          <artifactId>scalactic_2.13</artifactId>
+          <version>3.2.16</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.scalatest</groupId>
+          <artifactId>scalatest_2.13</artifactId>
+          <version>3.2.16</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+</project>
