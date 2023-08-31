@@ -39,7 +39,7 @@ class SecretsIntegrationTest extends IntegrationTestBase {
     }
   }
 
-  "dbutils.secrets.get()" should "get a secret in a scope" taggedAs(Integration, SecretsGet) in {
+  "dbutils.secrets.get()" should "get a secret in a scope" taggedAs (Integration, SecretsGet) in {
     val scopeName = NameUtils.uniqueName("dbutils")
     inScope(scopeName) {
       val secretName = NameUtils.uniqueName("dbutils")
@@ -54,7 +54,7 @@ class SecretsIntegrationTest extends IntegrationTestBase {
     }
   }
 
-  "dbutils.secrets.getBytes()" should "get a secret in a scope" taggedAs(Integration, SecretsGet) in {
+  "dbutils.secrets.getBytes()" should "get a secret in a scope" taggedAs (Integration, SecretsGet) in {
     val scopeName = NameUtils.uniqueName("dbutils")
     inScope(scopeName) {
       val secretName = NameUtils.uniqueName("dbutils")
@@ -70,4 +70,3 @@ class SecretsIntegrationTest extends IntegrationTestBase {
     }
   }
 }
-

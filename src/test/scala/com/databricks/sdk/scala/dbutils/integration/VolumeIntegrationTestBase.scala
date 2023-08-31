@@ -35,4 +35,3 @@ class VolumeIntegrationTestBase extends IntegrationTestBase with Matchers with B
     super.afterAll()
   }
 }
-
