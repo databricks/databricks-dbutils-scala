@@ -78,6 +78,13 @@
       <version>2.0.7</version>
       <scope>test</scope>
     </dependency>
+    <!-- For mocking dependencies -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <!-- Version 5 drops support for Java 8 -->
+      <version>4.11.0</version>
+    </dependency>
   </dependencies>
   <!-- Used for the supersafe compiler plugin for Scalatest -->
   <repositories>

@@ -1,16 +1,25 @@
-package com.databricks.sdk.scala
-package dbutils
+package com.databricks.sdk.scala.dbutils
 
-class ProxyDbfsTest extends DBUtilsTestBase {
+import org.scalatest.flatspec.AnyFlatSpec
+import org.mockito.Mockito._
 
-  "When inside DBR, FSUtils" should "be able to upload outside of /Volumes" taggedAs Integration in {
-    if (!isInDbr) {
-      cancel("This test must only be run inside DBR")
-    }
-    val testFilePath = s"/tmp/upload_and_download.txt"
-    val testFile = "Hello, world!"
-    dbutils.fs.put(testFilePath, testFile)
-    val result = dbutils.fs.head(testFilePath)
-    result should be(testFile)
+case class TestDBUtils(
+    widgets: WidgetsUtils = null,
+    meta: MetaUtils = null,
+    fs: DbfsUtils = null,
+    notebook: NotebookUtils = null,
+    secrets: SecretUtils = null,
+    library: LibraryUtils = null,
+    credentials: DatabricksCredentialUtils = null,
+    data: DataUtils = null,
+    jobs: JobsUtils = null)
+
+class ProxyDbfsTest extends AnyFlatSpec {
+  it should "call the appropriate backend method" in {
+    val proxyLibrary = mock(classOf[LibraryUtils])
+    val proxyBackend = TestDBUtils(library = proxyLibrary)
+    val proxyDbUtils = new ProxyDBUtilsImpl(proxyBackend)
+    proxyDbUtils.library.restartPython()
+    verify(proxyLibrary).restartPython()
   }
 }
