@@ -4,7 +4,7 @@ package dbutils
 import Implicits._
 import com.databricks.sdk.scala.dbutils.ProxyDBUtilsImpl.getProxyInstance
 
-import java.lang.reflect.{Method, Proxy}
+import java.lang.reflect.{Method, Proxy, UndeclaredThrowableException}
 import scala.reflect.{classTag, ClassTag}
 
 private object Implicits {
@@ -60,7 +60,21 @@ private object ProxyDBUtilsImpl {
           val args0 = if (args == null) Seq.empty else args.toSeq
           val converter = converters.getOrElse(method.getName, MethodCallAdapter.IDENTITY)
           val convertedArgs = converter.handleArgs(args0)
-          val backendMethod = backendInstance.getClass.getMethod(method.getName, convertedArgs.map(_.getClass): _*)
+          // Some types in the SDK DBUtils implementation don't match the corresponding types in DBR (like
+          // CommandContext, RunId, FileInfo, MountInfo, etc.). To look up the correct method in DBR, we need to use
+          // the corresponding types in DBR. Conveniently, handleArgs maps these arguments to the corresponding types
+          // in DBR. However, getMethod requires exact types and not subtypes, so for methods that take Option[T],
+          // getMethod must be called with classOf[Option[T]] rather than classOf[Some[T]]. In this case, we fall back
+          // to the original types defined in the SDK DBUtils interfaces. This does mean that it is impossible to
+          // support methods with an Option[T] argument and a separate argument with a different type than defined in
+          // DBR.
+          val backendMethod =
+            try {
+              backendInstance.getClass.getMethod(method.getName, convertedArgs.map(_.getClass): _*)
+            } catch {
+              case _: NoSuchMethodException =>
+                backendInstance.getClass.getMethod(method.getName, method.getParameterTypes: _*)
+            }
           val result = backendMethod.invoke(backendInstance, convertedArgs: _*)
           converter.convertResult(result)
         })
