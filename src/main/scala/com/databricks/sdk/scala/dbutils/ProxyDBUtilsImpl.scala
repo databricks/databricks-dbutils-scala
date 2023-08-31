@@ -5,7 +5,7 @@ import Implicits._
 import com.databricks.sdk.scala.dbutils.ProxyDBUtilsImpl.getProxyInstance
 
 import java.lang.reflect.{Method, Proxy}
-import scala.reflect.{ClassTag, classTag}
+import scala.reflect.{classTag, ClassTag}
 
 private object Implicits {
   implicit class ReflectiveLookup(o: AnyRef) {
