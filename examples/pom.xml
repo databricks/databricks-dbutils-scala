@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
+  <parent>
+    <groupId>com.databricks</groupId>
+    <artifactId>databricks-dbutils-scala-parent</artifactId>
+    <version>0.1.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
   <groupId>com.databricks</groupId>
   <artifactId>databricks-dbutils-scala-examples</artifactId>
   <version>0.1.0</version>
-
   <name>DBUtils for Scala Examples</name>
-
   <dependencies>
     <dependency>
       <groupId>com.databricks</groupId>
@@ -17,14 +19,19 @@
       <version>0.1.0</version>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
-        <!-- 2.31.0 + version requires JRE 11 -->
-        <version>2.30.0</version>
+        <configuration>
+          <scala>
+            <scalafmt>
+              <file>${project.parent.basedir}/scalafmt.conf</file>
+              <!-- optional -->
+            </scalafmt>
+          </scala>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>net.alchim31.maven</groupId>

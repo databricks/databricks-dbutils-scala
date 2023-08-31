@@ -23,12 +23,6 @@
           <!-- 2.31.0 + version requires JRE 11 -->
           <version>2.30.0</version>
           <configuration>
-            <scala>
-              <scalafmt>
-                <file>${project.basedir}/scalafmt.conf</file>
-                <!-- optional -->
-              </scalafmt>
-            </scala>
             <pom>
               <includes>
                 <include>pom.xml</include>
