@@ -131,17 +131,17 @@
           </execution>
           <execution>
             <id>prepare-release-assets</id>
-            <phase>prepare-package</phase>
             <goals>
               <goal>add-source</goal>
             </goals>
+            <phase>prepare-package</phase>
           </execution>
           <execution>
             <id>generate-doc-jar</id>
-            <phase>package</phase>
             <goals>
               <goal>doc-jar</goal>
             </goals>
+            <phase>package</phase>
           </execution>
         </executions>
       </plugin>
