@@ -1,6 +1,6 @@
 package com.databricks.sdk.scala.dbutils.integration
 
-class ProxyDbfsIntegrationTest extends DBUtilsTestBase {
+class ProxyDbfsIntegrationTest extends VolumeIntegrationTestBase {
 
   "When inside DBR, FSUtils" should "be able to upload outside of /Volumes" taggedAs Integration in {
     if (!isInDbr) {
