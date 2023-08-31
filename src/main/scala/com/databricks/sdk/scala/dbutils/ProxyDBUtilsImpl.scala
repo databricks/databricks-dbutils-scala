@@ -108,10 +108,10 @@ private object ProxyDBUtilsImpl {
     val commandContext = c.asInstanceOf[CommandContext]
     val runIdClass = Class.forName("com.databricks.backend.common.storage.elasticspark.RunId")
     val rootRunIdOpt = commandContext.rootRunId.map { id =>
-      runIdClass.getConstructor(classOf[Long]).newInstance(id.id)
+      runIdClass.getConstructor(classOf[Long]).newInstance(new java.lang.Long(id.id))
     }
     val currentRunIdOpt = commandContext.currentRunId.map { id =>
-      runIdClass.getConstructor(classOf[Long]).newInstance(id.id)
+      runIdClass.getConstructor(classOf[Long]).newInstance(new java.lang.Long(id.id))
     }
     val commandContextClass = Class.forName("com.databricks.backend.common.rpc.CommandContext")
     commandContextClass
