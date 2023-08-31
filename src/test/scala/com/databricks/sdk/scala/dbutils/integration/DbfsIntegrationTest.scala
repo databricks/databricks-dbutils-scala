@@ -1,9 +1,8 @@
-package com.databricks.sdk.scala
-package dbutils
+package com.databricks.sdk.scala.dbutils.integration
 
 import com.databricks.sdk.core.DatabricksException
 
-class DbfsTest extends DBUtilsTestBase {
+class DbfsIntegrationTest extends DBUtilsTestBase {
   "DBFS" should "upload and download" taggedAs Integration in {
     val testFilePath = s"$testDir/upload_and_download.txt"
     val testFile = "Hello, world!"

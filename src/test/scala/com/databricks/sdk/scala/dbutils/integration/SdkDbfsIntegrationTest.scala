@@ -1,7 +1,6 @@
-package com.databricks.sdk.scala
-package dbutils
+package com.databricks.sdk.scala.dbutils.integration
 
-class SdkDbfsTest extends DBUtilsTestBase {
+class SdkDbfsIntegrationTest extends DBUtilsTestBase {
   "When outside of DBR, FSUtils" should "not be able to upload outside of /Volumes" taggedAs Integration in {
     if (isInDbr) {
       cancel("This test must only be run inside DBR")
