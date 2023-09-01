@@ -38,6 +38,14 @@ class ProxyDbfsTest extends AnyFlatSpec {
     verify(proxyFs).ls("/")
   }
 
+  "dbutils.fs.put()" should "call put()" in {
+    val proxyFs = mock(classOf[DbfsUtils])
+    val proxyBackend = TestDBUtils(fs = proxyFs)
+    val proxyDbUtils = new ProxyDBUtilsImpl(proxyBackend)
+    proxyDbUtils.fs.put("/test", "test")
+    verify(proxyFs).put("/test", "test")
+  }
+
   "dbutils.fs.mounts()" should "call mounts() and convert the response" in {
     // We mock using the DbfsUtils type, but in DBR, the underlying type is defined
     // in DBR.
