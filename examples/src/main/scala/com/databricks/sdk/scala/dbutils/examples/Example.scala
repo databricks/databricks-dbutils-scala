@@ -12,5 +12,11 @@ object Example {
     } else {
       println("Failure!")
     }
+    dbutils.fs.rm("/Volumes/main/default/scrap/file.txt")
+
+    val scopes = dbutils.secrets.listScopes()
+    val secrets = dbutils.secrets.list(scopes.head.name)
+    val secret = dbutils.secrets.get(scopes.head.name, secrets.head.key)
+    println(s"Got secret ${secrets.head.key} from scope ${scopes.head.name}")
   }
 }
