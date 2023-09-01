@@ -76,19 +76,20 @@ private object ProxyDBUtilsImpl {
           // CommandContext, RunId, FileInfo, MountInfo, etc.). To look up the correct method in DBR, we need to use
           // the corresponding types in DBR. Conveniently, handleArgs maps these arguments to the corresponding types
           // in DBR. However, getMethod requires exact types and not subtypes, so for methods that take Option[T],
-          // getMethod must be called with classOf[Option[T]] rather than classOf[Some[T]]. In this case, we fall back
-          // to the original types defined in the SDK DBUtils interfaces. This does mean that it is impossible to
-          // support methods with an Option[T] argument and a separate argument with a different type than defined in
-          // DBR. Furthermore, as
+          // getMethod must be called with classOf[Option[T]] rather than classOf[Some[T]], or with primitive classes
+          // rather than boxed classes. For example:
+          // def put(path: String, contents: String, overwrite: Boolean = false): Unit
+          // has a method signature of put(String, String, boolean), but the last argument will be passed as a
+          // boxed java.lang.Boolean at runtime.
+          // So, we need to find the method that matches the name and number of arguments, and whose arguments are
+          // either the same type or a subtype as the arguments passed in, or whose arguments are boxed types and whose
+          // corresponding parameters are the corresponding primitive types.
           val backendMethod = backendInstance.getClass.getMethods.find { m =>
             m.getName == method.getName && m.getParameterTypes.length == convertedArgs.length &&
             m.getParameterTypes.zip(convertedArgs).forall {
               case (paramType, arg) =>
                 // Either arg's class is the same as paramType, or arg's class is a subtype of paramType, or arg's
                 // class is a boxed type and paramType is the corresponding primitive type. For example:
-                // def put(path: String, contents: String, overwrite: Boolean = false): Unit
-                // has a method signature of put(String, String, boolean), but the last argument will be passed as a
-                // boxed java.lang.Boolean at runtime.
                 paramType.isAssignableFrom(arg.getClass) ||
                 (paramType.isPrimitive && paramType.isAssignableFrom(toPrimitiveClass(arg.getClass)))
             }
