@@ -55,4 +55,4 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Run tests
-        run: mvn --errors test -P${{ matrix.profile }}
+        run: mvn --errors --no-transfer-progress test -P${{ matrix.profile }}
