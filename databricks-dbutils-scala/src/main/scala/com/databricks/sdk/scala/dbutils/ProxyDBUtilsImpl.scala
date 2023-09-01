@@ -50,15 +50,15 @@ private object ProxyDBUtilsImpl {
   }
 
   def toPrimitiveClass(clazz: Class[_]): Class[_] = clazz match {
-    case c if c == classOf[java.lang.Boolean] => java.lang.Boolean.TYPE
-    case c if c == classOf[java.lang.Byte] => java.lang.Byte.TYPE
+    case c if c == classOf[java.lang.Boolean]   => java.lang.Boolean.TYPE
+    case c if c == classOf[java.lang.Byte]      => java.lang.Byte.TYPE
     case c if c == classOf[java.lang.Character] => java.lang.Character.TYPE
-    case c if c == classOf[java.lang.Double] => java.lang.Double.TYPE
-    case c if c == classOf[java.lang.Float] => java.lang.Float.TYPE
-    case c if c == classOf[java.lang.Integer] => java.lang.Integer.TYPE
-    case c if c == classOf[java.lang.Long] => java.lang.Long.TYPE
-    case c if c == classOf[java.lang.Short] => java.lang.Short.TYPE
-    case _ => clazz
+    case c if c == classOf[java.lang.Double]    => java.lang.Double.TYPE
+    case c if c == classOf[java.lang.Float]     => java.lang.Float.TYPE
+    case c if c == classOf[java.lang.Integer]   => java.lang.Integer.TYPE
+    case c if c == classOf[java.lang.Long]      => java.lang.Long.TYPE
+    case c if c == classOf[java.lang.Short]     => java.lang.Short.TYPE
+    case _                                      => clazz
   }
 
   def getProxyInstance[T: ClassTag](
@@ -84,20 +84,21 @@ private object ProxyDBUtilsImpl {
           // So, we need to find the method that matches the name and number of arguments, and whose arguments are
           // either the same type or a subtype as the arguments passed in, or whose arguments are boxed types and whose
           // corresponding parameters are the corresponding primitive types.
-          val backendMethod = backendInstance.getClass.getMethods.find { m =>
-            m.getName == method.getName && m.getParameterTypes.length == convertedArgs.length &&
-            m.getParameterTypes.zip(convertedArgs).forall {
-              case (paramType, arg) =>
+          val backendMethod = backendInstance.getClass.getMethods
+            .find { m =>
+              m.getName == method.getName && m.getParameterTypes.length == convertedArgs.length &&
+              m.getParameterTypes.zip(convertedArgs).forall { case (paramType, arg) =>
                 // Either arg's class is the same as paramType, or arg's class is a subtype of paramType, or arg's
                 // class is a boxed type and paramType is the corresponding primitive type. For example:
                 paramType.isAssignableFrom(arg.getClass) ||
                 (paramType.isPrimitive && paramType.isAssignableFrom(toPrimitiveClass(arg.getClass)))
+              }
             }
-          }.getOrElse {
-            throw new NoSuchMethodException(
-              s"Method ${method.getName} with arguments ${convertedArgs.mkString(", ")} not found in " +
-              s"backend instance ${backendInstance.getClass.getName}")
-          }
+            .getOrElse {
+              throw new NoSuchMethodException(
+                s"Method ${method.getName} with arguments ${convertedArgs.mkString(", ")} not found in " +
+                  s"backend instance ${backendInstance.getClass.getName}")
+            }
           val result = backendMethod.invoke(backendInstance, convertedArgs: _*)
           converter.convertResult(result)
         })
