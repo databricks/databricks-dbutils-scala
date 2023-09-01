@@ -49,6 +49,18 @@ private object ProxyDBUtilsImpl {
     threadLocal.get()
   }
 
+  def toPrimitiveClass(clazz: Class[_]): Class[_] = clazz match {
+    case c if c == classOf[java.lang.Boolean] => java.lang.Boolean.TYPE
+    case c if c == classOf[java.lang.Byte] => java.lang.Byte.TYPE
+    case c if c == classOf[java.lang.Character] => java.lang.Character.TYPE
+    case c if c == classOf[java.lang.Double] => java.lang.Double.TYPE
+    case c if c == classOf[java.lang.Float] => java.lang.Float.TYPE
+    case c if c == classOf[java.lang.Integer] => java.lang.Integer.TYPE
+    case c if c == classOf[java.lang.Long] => java.lang.Long.TYPE
+    case c if c == classOf[java.lang.Short] => java.lang.Short.TYPE
+    case _ => clazz
+  }
+
   def getProxyInstance[T: ClassTag](
       backendInstance: AnyRef,
       converters: Map[String, MethodCallAdapter] = Map.empty): T = {
@@ -67,14 +79,24 @@ private object ProxyDBUtilsImpl {
           // getMethod must be called with classOf[Option[T]] rather than classOf[Some[T]]. In this case, we fall back
           // to the original types defined in the SDK DBUtils interfaces. This does mean that it is impossible to
           // support methods with an Option[T] argument and a separate argument with a different type than defined in
-          // DBR.
-          val backendMethod =
-            try {
-              backendInstance.getClass.getMethod(method.getName, convertedArgs.map(_.getClass): _*)
-            } catch {
-              case _: NoSuchMethodException =>
-                backendInstance.getClass.getMethod(method.getName, method.getParameterTypes: _*)
+          // DBR. Furthermore, as
+          val backendMethod = backendInstance.getClass.getMethods.find { m =>
+            m.getName == method.getName && m.getParameterTypes.length == convertedArgs.length &&
+            m.getParameterTypes.zip(convertedArgs).forall {
+              case (paramType, arg) =>
+                // Either arg's class is the same as paramType, or arg's class is a subtype of paramType, or arg's
+                // class is a boxed type and paramType is the corresponding primitive type. For example:
+                // def put(path: String, contents: String, overwrite: Boolean = false): Unit
+                // has a method signature of put(String, String, boolean), but the last argument will be passed as a
+                // boxed java.lang.Boolean at runtime.
+                paramType.isAssignableFrom(arg.getClass) ||
+                (paramType.isPrimitive && paramType.isAssignableFrom(toPrimitiveClass(arg.getClass)))
             }
+          }.getOrElse {
+            throw new NoSuchMethodException(
+              s"Method ${method.getName} with arguments ${convertedArgs.mkString(", ")} not found in " +
+              s"backend instance ${backendInstance.getClass.getName}")
+          }
           val result = backendMethod.invoke(backendInstance, convertedArgs: _*)
           converter.convertResult(result)
         })
