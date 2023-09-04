@@ -5,12 +5,11 @@
   <parent>
     <groupId>com.databricks</groupId>
     <artifactId>databricks-dbutils-scala-parent</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>com.databricks</groupId>
   <artifactId>databricks-dbutils-scala-examples</artifactId>
-  <version>0.1.0</version>
   <name>DBUtils for Scala Examples</name>
   <properties>
     <scala.major>2</scala.major>
@@ -26,7 +25,7 @@
     <dependency>
       <groupId>com.databricks</groupId>
       <artifactId>databricks-dbutils-scala_${scala.major}.${scala.minor}</artifactId>
-      <version>0.1.0</version>
+      <version>0.1.1</version>
     </dependency>
   </dependencies>
   <build>

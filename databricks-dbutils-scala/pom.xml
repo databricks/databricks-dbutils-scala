@@ -5,11 +5,10 @@
   <parent>
     <groupId>com.databricks</groupId>
     <artifactId>databricks-dbutils-scala-parent</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>databricks-dbutils-scala_${scala.major}.${scala.minor}</artifactId>
-  <version>0.1.0</version>
   <name>DBUtils for Scala</name>
   <description>DBUtils for Scala simplifies interacting with various components of Databricks, such as the Databricks File
         System (DBFS), Secret Scopes, Widgets, and other utilities.</description>
