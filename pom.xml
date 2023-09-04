@@ -11,6 +11,13 @@
   <name>DBUtils for Scala</name>
   <description>DBUtils for Scala simplifies interacting with various components of Databricks, such as the Databricks File
     System (DBFS), Secret Scopes, Widgets, and other utilities.</description>
+  <url>https://github.com/databricks/databricks-sdk-java</url>
+  <licenses>
+    <license>
+      <name>Databricks License</name>
+      <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/LICENSE</url>
+    </license>
+  </licenses>
   <developers>
     <developer>
       <name>Miles Yucht</name>
@@ -21,6 +28,10 @@
       <email>tanmay.rustagi@databricks.com</email>
     </developer>
   </developers>
+  <modules>
+    <module>databricks-dbutils-scala</module>
+    <module>examples</module>
+  </modules>
   <scm>
     <connection>scm:git:https://github.com/databricks/databricks-dbutils-scala.git</connection>
     <developerConnection>scm:git:https://github.com/databricks/databricks-dbutils-scala.git</developerConnection>
@@ -41,17 +52,6 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
-  <url>https://github.com/databricks/databricks-sdk-java</url>
-  <licenses>
-    <license>
-      <name>Databricks License</name>
-      <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/LICENSE</url>
-    </license>
-  </licenses>
-  <modules>
-    <module>databricks-dbutils-scala</module>
-    <module>examples</module>
-  </modules>
   <build>
     <pluginManagement>
       <plugins>
