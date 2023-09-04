@@ -22,7 +22,7 @@ You can install Databricks Utilities for Scala by adding the following to your `
 <dependency>
   <groupId>com.databricks</groupId>
   <artifactId>databricks-sdk-dbutils</artifactId>
-  <version>0.1.2</version>
+  <version>0.1.3</version>
 </dependency>
 ```
 
