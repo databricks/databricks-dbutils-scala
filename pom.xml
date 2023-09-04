@@ -8,15 +8,76 @@
   <artifactId>databricks-dbutils-scala-parent</artifactId>
   <version>0.1.1</version>
   <packaging>pom</packaging>
-  <name>DBUtils for Scala Parent</name>
-  <description>The parent POM for DBUtils for Scala.</description>
+  <name>DBUtils for Scala</name>
+  <description>DBUtils for Scala simplifies interacting with various components of Databricks, such as the Databricks File
+    System (DBFS), Secret Scopes, Widgets, and other utilities.</description>
+  <url>https://github.com/databricks/databricks-sdk-java</url>
+  <licenses>
+    <license>
+      <name>Databricks License</name>
+      <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/LICENSE</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Miles Yucht</name>
+      <email>miles@databricks.com</email>
+    </developer>
+    <developer>
+      <name>Tanmay Rustagi</name>
+      <email>tanmay.rustagi@databricks.com</email>
+    </developer>
+  </developers>
   <modules>
     <module>databricks-dbutils-scala</module>
     <module>examples</module>
+    <module>release</module>
   </modules>
+  <scm>
+    <connection>scm:git:https://github.com/databricks/databricks-dbutils-scala.git</connection>
+    <developerConnection>scm:git:https://github.com/databricks/databricks-dbutils-scala.git</developerConnection>
+    <tag>v${project.version}</tag>
+    <url>https://github.com/databricks/databricks-dbutils-scala/tree/v${project.version}</url>
+  </scm>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/databricks/databricks-dbutils-scala/issues</url>
+  </issueManagement>
+  <ciManagement>
+    <system>GitHub Actions</system>
+    <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/.github/workflows/pr.yml</url>
+  </ciManagement>
+  <distributionManagement>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
   <build>
     <pluginManagement>
       <plugins>
+        <!-- Sign the artifacts -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>3.1.0</version>
+          <configuration>
+            <!-- Prevent gpg from using pinentry programs -->
+            <gpgArguments>
+              <arg>--pinentry-mode</arg>
+              <arg>loopback</arg>
+            </gpgArguments>
+          </configuration>
+          <executions>
+            <execution>
+              <id>sign-artifacts</id>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+              <phase>verify</phase>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>com.diffplug.spotless</groupId>
           <artifactId>spotless-maven-plugin</artifactId>
@@ -39,7 +100,104 @@
             </pom>
           </configuration>
         </plugin>
+        <!-- Sonatype Release plugin -->
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>1.6.13</version>
+          <extensions>true</extensions>
+          <configuration>
+            <serverId>ossrh</serverId>
+            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>scala-2.12</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <scala.major>2</scala.major>
+        <scala.minor>12</scala.minor>
+        <scala.patch>10</scala.patch>
+      </properties>
+      <dependencyManagement>
+        <dependencies>
+          <!-- ScalaTest 2.12 -->
+          <dependency>
+            <groupId>org.scalactic</groupId>
+            <artifactId>scalactic_2.12</artifactId>
+            <version>3.2.16</version>
+            <scope>test</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.12</artifactId>
+            <version>3.2.16</version>
+            <scope>test</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <!-- Maven source plugin to meet Maven Central's requirements -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-source-plugin</artifactId>
+              <version>3.3.0</version>
+              <executions>
+                <execution>
+                  <id>generate-source-jar</id>
+                  <goals>
+                    <goal>jar-no-fork</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+    <profile>
+      <id>scala-2.13</id>
+      <properties>
+        <scala.major>2</scala.major>
+        <scala.minor>13</scala.minor>
+        <scala.patch>5</scala.patch>
+      </properties>
+      <dependencyManagement>
+        <dependencies>
+          <!-- ScalaTest 2.13 -->
+          <dependency>
+            <groupId>org.scalactic</groupId>
+            <artifactId>scalactic_2.13</artifactId>
+            <version>3.2.16</version>
+            <scope>test</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.13</artifactId>
+            <version>3.2.16</version>
+            <scope>test</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+  </profiles>
 </project>
