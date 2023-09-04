@@ -8,8 +8,7 @@
     <version>0.1.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <groupId>com.databricks</groupId>
-  <artifactId>databricks-dbutils-scala_${scala.version}</artifactId>
+  <artifactId>databricks-dbutils-scala_${scala.major}.${scala.minor}</artifactId>
   <version>0.1.0</version>
   <name>DBUtils for Scala</name>
   <description>DBUtils for Scala simplifies interacting with various components of Databricks, such as the Databricks File
@@ -55,15 +54,17 @@
     <jackson.version>2.15.2</jackson.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <!-- Scala version is overridden by profiles -->
-    <scala.version>2.12.10</scala.version>
+    <scala.major>2</scala.major>
+    <!-- Scala version is overridden by profiles but is needed here for the pom to be valid -->
+    <scala.minor>12</scala.minor>
+    <scala.patch>10</scala.patch>
   </properties>
   <dependencies>
     <!-- Scala Standard Library -->
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
-      <version>${scala.version}</version>
+      <version>${scala.major}.${scala.minor}.${scala.patch}</version>
     </dependency>
     <!-- Nullable annotation -->
     <dependency>
@@ -113,11 +114,11 @@
         <artifactId>scala-maven-plugin</artifactId>
         <version>4.4.0</version>
         <configuration>
-          <scalaVersion>${scala.version}</scalaVersion>
+          <scalaVersion>${scala.major}.${scala.minor}.${scala.patch}</scalaVersion>
           <compilerPlugins>
             <compilerPlugin>
               <groupId>com.artima.supersafe</groupId>
-              <artifactId>supersafe_${scala.version}</artifactId>
+              <artifactId>supersafe_${scala.major}.${scala.minor}.${scala.patch}</artifactId>
               <version>1.1.12</version>
             </compilerPlugin>
           </compilerPlugins>
@@ -169,7 +170,7 @@
             <goals>
               <goal>sign</goal>
             </goals>
-            <phase>verify</phase>
+            <phase>deploy</phase>
           </execution>
         </executions>
       </plugin>
@@ -255,9 +256,6 @@
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      <properties>
-        <scala.version>2.12.10</scala.version>
-      </properties>
       <dependencies>
         <!-- ScalaTest 2.12 -->
         <dependency>
@@ -320,7 +318,8 @@
     <profile>
       <id>scala-2.13</id>
       <properties>
-        <scala.version>2.13.5</scala.version>
+        <scala.minor>13</scala.minor>
+        <scala.patch>5</scala.patch>
       </properties>
       <dependencies>
         <!-- ScalaTest 2.13 -->

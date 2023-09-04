@@ -166,6 +166,7 @@ class ProxyDBUtilsImpl private[dbutils] (baseObj: AnyRef) extends DBUtils {
       "ls" ->
         new MethodCallAdapter(convertResult = { p =>
           p.asInstanceOf[Seq[AnyRef]].map { p =>
+            // Note: modificationTime is not in DBR < 10.4 LTS.
             FileInfo(p.getField("path"), p.getField("name"), p.getField("size"), p.getField("modificationTime"))
           }
         }),
@@ -198,6 +199,7 @@ class ProxyDBUtilsImpl private[dbutils] (baseObj: AnyRef) extends DBUtils {
   override val credentials: DatabricksCredentialUtils =
     getProxyInstance[DatabricksCredentialUtils](baseObj.getField("credentials"))
   override val jobs: JobsUtils = new ProxyJobsUtils(baseObj.getField("jobs"))
+  // Not in DBR 7.3
   override val data: DataUtils = getProxyInstance[DataUtils](baseObj.getField("data"))
 }
 
