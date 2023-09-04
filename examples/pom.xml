@@ -21,10 +21,10 @@
   </dependencies>
   <profiles>
     <profile>
+      <id>scala-2.12</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      <id>scala-2.12</id>
       <dependencies>
         <dependency>
           <groupId>com.databricks</groupId>
