@@ -12,26 +12,64 @@
   <artifactId>databricks-dbutils-scala-examples</artifactId>
   <version>0.1.0</version>
   <name>DBUtils for Scala Examples</name>
+  <properties>
+    <scala.major>2</scala.major>
+    <scala.minor>12</scala.minor>
+    <scala.patch>10</scala.patch>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-reload4j</artifactId>
       <version>2.0.7</version>
     </dependency>
+    <dependency>
+      <groupId>com.databricks</groupId>
+      <artifactId>databricks-dbutils-scala_${scala.major}.${scala.minor}</artifactId>
+      <version>0.1.0</version>
+    </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>4.4.0</version>
+        <configuration>
+          <scalaVersion>${scala.major}.${scala.minor}.${scala.patch}</scalaVersion>
+        </configuration>
+        <executions>
+          <execution>
+            <id>scala-compile</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <mainClass>com.databricks.sdk.scala.dbutils.examples.Example</mainClass>
+          <!-- You can also include arguments if needed -->
+          <!--
+          <arguments>
+              <argument>arg1</argument>
+              <argument>arg2</argument>
+          </arguments>
+          -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <profiles>
     <profile>
       <id>scala-2.12</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      <dependencies>
-        <dependency>
-          <groupId>com.databricks</groupId>
-          <artifactId>databricks-dbutils-scala_2.12.10</artifactId>
-          <version>0.1.0</version>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -46,39 +84,15 @@
               </scala>
             </configuration>
           </plugin>
-          <plugin>
-            <groupId>net.alchim31.maven</groupId>
-            <artifactId>scala-maven-plugin</artifactId>
-            <version>4.4.0</version>
-            <configuration>
-              <scalaVersion>2.12.10</scalaVersion>
-            </configuration>
-            <executions>
-              <execution>
-                <id>scala-compile</id>
-                <goals>
-                  <goal>compile</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>3.0.0</version>
-            <configuration>
-              <mainClass>com.databricks.sdk.scala.dbutils.examples.Example</mainClass>
-              <!-- You can also include arguments if needed -->
-              <!--
-              <arguments>
-                  <argument>arg1</argument>
-                  <argument>arg2</argument>
-              </arguments>
-              -->
-            </configuration>
-          </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>scala-2.13</id>
+      <properties>
+        <scala.minor>13</scala.minor>
+        <scala.patch>5</scala.patch>
+      </properties>
     </profile>
   </profiles>
 </project>
