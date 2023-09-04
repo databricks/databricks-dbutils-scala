@@ -7,6 +7,12 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        profile:
+          - scala-2.12
+          - scala-2.13
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -30,7 +36,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Publish to the Maven Central Repository
-        run: mvn -DskipTests=true --batch-mode deploy
+        run: mvn -DskipTests=true --batch-mode deploy -P${{ matrix.profile }}
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
