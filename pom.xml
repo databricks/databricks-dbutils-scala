@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <!-- Group and artifact identifiers, versioning -->
   <groupId>com.databricks</groupId>
-  <artifactId>databricks-dbutils-scala-parent</artifactId>
+  <artifactId>databricks-dbutils-scala-parent_${scala.major}.${scala.minor}</artifactId>
   <version>0.1.2</version>
   <packaging>pom</packaging>
   <name>DBUtils for Scala</name>
@@ -112,6 +112,19 @@
             <autoReleaseAfterClose>true</autoReleaseAfterClose>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.3.0</version>
+          <executions>
+            <execution>
+              <id>generate-source-jar</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -153,26 +166,6 @@
           </dependency>
         </dependencies>
       </dependencyManagement>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <!-- Maven source plugin to meet Maven Central's requirements -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-source-plugin</artifactId>
-              <version>3.3.0</version>
-              <executions>
-                <execution>
-                  <id>generate-source-jar</id>
-                  <goals>
-                    <goal>jar-no-fork</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
     </profile>
     <profile>
       <id>scala-2.13</id>
