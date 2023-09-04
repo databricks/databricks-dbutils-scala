@@ -10,11 +10,8 @@
   </parent>
   <artifactId>databricks-dbutils-scala_${scala.major}.${scala.minor}</artifactId>
   <properties>
-    <jackson.version>2.15.2</jackson.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <scala.major>2</scala.major>
     <!-- Scala version is overridden by profiles but is needed here for the pom to be valid -->
+    <scala.major>2</scala.major>
     <scala.minor>12</scala.minor>
     <scala.patch>10</scala.patch>
   </properties>
@@ -50,6 +47,18 @@
       <artifactId>mockito-core</artifactId>
       <!-- Version 5 drops support for Java 8 -->
       <version>4.11.0</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Scalatest test harness -->
+    <dependency>
+      <groupId>org.scalactic</groupId>
+      <artifactId>scalactic_2.12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_2.12</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <!-- Used for the supersafe compiler plugin for Scalatest -->
@@ -185,29 +194,15 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
   <profiles>
     <profile>
       <id>scala-2.12</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <dependencies>
-        <!-- ScalaTest 2.12 -->
-        <dependency>
-          <groupId>org.scalactic</groupId>
-          <artifactId>scalactic_2.12</artifactId>
-          <version>3.2.16</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.scalatest</groupId>
-          <artifactId>scalatest_2.12</artifactId>
-          <version>3.2.16</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <!-- Only run formatter as part of the scala-2.12 profile -->
@@ -223,56 +218,8 @@
               </scala>
             </configuration>
           </plugin>
-          <!-- Maven source plugin to meet Maven Central's requirements -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>3.3.0</version>
-            <executions>
-              <execution>
-                <id>generate-source-jar</id>
-                <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <!-- Release plugin -->
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.13</version>
-            <extensions>true</extensions>
-            <configuration>
-              <serverId>ossrh</serverId>
-              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-              <autoReleaseAfterClose>true</autoReleaseAfterClose>
-            </configuration>
-          </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>scala-2.13</id>
-      <properties>
-        <scala.minor>13</scala.minor>
-        <scala.patch>5</scala.patch>
-      </properties>
-      <dependencies>
-        <!-- ScalaTest 2.13 -->
-        <dependency>
-          <groupId>org.scalactic</groupId>
-          <artifactId>scalactic_2.13</artifactId>
-          <version>3.2.16</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.scalatest</groupId>
-          <artifactId>scalatest_2.13</artifactId>
-          <version>3.2.16</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
     </profile>
   </profiles>
 </project>

@@ -31,6 +31,7 @@
   <modules>
     <module>databricks-dbutils-scala</module>
     <module>examples</module>
+    <module>release</module>
   </modules>
   <scm>
     <connection>scm:git:https://github.com/databricks/databricks-dbutils-scala.git</connection>
@@ -53,19 +54,13 @@
     </repository>
   </distributionManagement>
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-      </plugin>
-    </plugins>
     <pluginManagement>
       <plugins>
         <!-- Sign the artifacts -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.6</version>
+          <version>3.1.0</version>
           <configuration>
             <!-- Prevent gpg from using pinentry programs -->
             <gpgArguments>
@@ -105,7 +100,96 @@
             </pom>
           </configuration>
         </plugin>
+        <!-- Sonatype Release plugin -->
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>1.6.13</version>
+          <extensions>true</extensions>
+          <configuration>
+            <serverId>ossrh</serverId>
+            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>scala-2.12</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <!-- ScalaTest 2.12 -->
+          <dependency>
+            <groupId>org.scalactic</groupId>
+            <artifactId>scalactic_2.12</artifactId>
+            <version>3.2.16</version>
+            <scope>test</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.12</artifactId>
+            <version>3.2.16</version>
+            <scope>test</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <!-- Maven source plugin to meet Maven Central's requirements -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-source-plugin</artifactId>
+              <version>3.3.0</version>
+              <executions>
+                <execution>
+                  <id>generate-source-jar</id>
+                  <goals>
+                    <goal>jar-no-fork</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+    <profile>
+      <id>scala-2.13</id>
+      <properties>
+        <scala.minor>13</scala.minor>
+        <scala.patch>5</scala.patch>
+      </properties>
+      <dependencies>
+        <!-- ScalaTest 2.13 -->
+        <dependency>
+          <groupId>org.scalactic</groupId>
+          <artifactId>scalactic_2.13</artifactId>
+          <version>3.2.16</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.scalatest</groupId>
+          <artifactId>scalatest_2.13</artifactId>
+          <version>3.2.16</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

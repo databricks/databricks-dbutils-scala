@@ -8,7 +8,6 @@
     <version>0.1.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <groupId>com.databricks</groupId>
   <artifactId>databricks-dbutils-scala-examples</artifactId>
   <name>DBUtils for Scala Examples</name>
   <properties>
@@ -59,6 +58,14 @@
               <argument>arg2</argument>
           </arguments>
           -->
+        </configuration>
+      </plugin>
+      <!-- No need to release the example -->
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <configuration>
+          <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
         </configuration>
       </plugin>
     </plugins>
