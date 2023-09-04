@@ -131,6 +131,10 @@
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
+      <properties>
+        <scala.minor>12</scala.minor>
+        <scala.patch>10</scala.patch>
+      </properties>
       <dependencyManagement>
         <dependencies>
           <!-- ScalaTest 2.12 -->
@@ -175,21 +179,23 @@
         <scala.minor>13</scala.minor>
         <scala.patch>5</scala.patch>
       </properties>
-      <dependencies>
-        <!-- ScalaTest 2.13 -->
-        <dependency>
-          <groupId>org.scalactic</groupId>
-          <artifactId>scalactic_2.13</artifactId>
-          <version>3.2.16</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.scalatest</groupId>
-          <artifactId>scalatest_2.13</artifactId>
-          <version>3.2.16</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
+      <dependencyManagement>
+        <dependencies>
+          <!-- ScalaTest 2.13 -->
+          <dependency>
+            <groupId>org.scalactic</groupId>
+            <artifactId>scalactic_2.13</artifactId>
+            <version>3.2.16</version>
+            <scope>test</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.13</artifactId>
+            <version>3.2.16</version>
+            <scope>test</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
     </profile>
   </profiles>
 </project>

@@ -52,12 +52,12 @@
     <!-- Scalatest test harness -->
     <dependency>
       <groupId>org.scalactic</groupId>
-      <artifactId>scalactic_2.12</artifactId>
+      <artifactId>scalactic_${scala.major}.${scala.minor}</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.12</artifactId>
+      <artifactId>scalatest_${scala.major}.${scala.minor}</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
