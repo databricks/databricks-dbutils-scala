@@ -16,6 +16,11 @@
             <useProjectAttachments>true</useProjectAttachments>
             <!-- Unzip dependencies and merge classes into the assembly jar (otherwise, the assembly jar will contain jars) -->
             <unpack>true</unpack>
+            <unpackOptions>
+                <excludes>
+                    <exclude>**/META-INF/versions/9/**</exclude>
+                </excludes>
+            </unpackOptions>
             <!-- Include test dependencies, as we plan to run the tests from the test jar in Databricks -->
             <scope>test</scope>
             <!-- To minimize conflicts when running tests on Databricks, we should only include jars here that
@@ -27,6 +32,10 @@
                 <!-- These test libraries are not part of DBR. -->
                 <include>org.scalactic:*</include>
                 <include>org.scalatest:*</include>
+                <!-- Mockito deps -->
+                <include>org.mockito:*</include>
+                <include>org.objenesis:*</include>
+                <include>net.bytebuddy:*</include>
             </includes>
         </dependencySet>
     </dependencySets>

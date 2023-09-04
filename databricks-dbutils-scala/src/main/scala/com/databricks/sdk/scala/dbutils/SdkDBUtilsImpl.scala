@@ -13,8 +13,8 @@ private object SdkDbfsUtilsImpl {
   def unsupportedMethod(methodName: String): Nothing =
     throw new UnsupportedOperationException(s"Method $methodName is not supported in the SDK version of DBUtils.")
 
-  def unsupportedField(methodName: String): Nothing =
-    throw new UnsupportedOperationException(s"Field $methodName is not supported in the SDK version of DBUtils.")
+  def unsupportedField(fieldName: String): Nothing =
+    throw new UnsupportedOperationException(s"Field $fieldName is not supported in the SDK version of DBUtils.")
 }
 
 /** Help is a no-op in the SDK version of DBUtils. */
@@ -60,6 +60,10 @@ private class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
   }
 
   private def mv(from: String, to: String, recurse: Boolean, delete: Boolean): Boolean = {
+    if (from == to) {
+      return true
+    }
+
     val inputStream = w.files().download(from).getContents
     try {
       w.files().upload(new UploadRequest().setFilePath(to).setContents(inputStream))

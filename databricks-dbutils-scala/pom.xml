@@ -169,7 +169,7 @@
             <goals>
               <goal>sign</goal>
             </goals>
-            <phase>verify</phase>
+            <phase>deploy</phase>
           </execution>
         </executions>
       </plugin>

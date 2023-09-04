@@ -21,6 +21,9 @@
   </dependencies>
   <profiles>
     <profile>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <id>scala-2.12</id>
       <dependencies>
         <dependency>
@@ -47,6 +50,9 @@
             <groupId>net.alchim31.maven</groupId>
             <artifactId>scala-maven-plugin</artifactId>
             <version>4.4.0</version>
+            <configuration>
+              <scalaVersion>2.12.10</scalaVersion>
+            </configuration>
             <executions>
               <execution>
                 <id>scala-compile</id>
