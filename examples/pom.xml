@@ -24,7 +24,7 @@
     <dependency>
       <groupId>com.databricks</groupId>
       <artifactId>databricks-dbutils-scala_${scala.major}.${scala.minor}</artifactId>
-      <version>0.1.1</version>
+      <version>0.1.2</version>
     </dependency>
   </dependencies>
   <build>
