@@ -28,7 +28,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Check formatting
-        run: mvn --errors spotless:check -Pscala-2.12
+        run: mvn --errors --no-transfer-progress spotless:check -Pscala-2.12
 
   test:
     runs-on: ubuntu-latest
