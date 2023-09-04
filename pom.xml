@@ -132,6 +132,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
+        <scala.major>2</scala.major>
         <scala.minor>12</scala.minor>
         <scala.patch>10</scala.patch>
       </properties>
@@ -176,6 +177,7 @@
     <profile>
       <id>scala-2.13</id>
       <properties>
+        <scala.major>2</scala.major>
         <scala.minor>13</scala.minor>
         <scala.patch>5</scala.patch>
       </properties>

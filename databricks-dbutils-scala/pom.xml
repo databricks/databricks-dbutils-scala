@@ -9,12 +9,6 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>databricks-dbutils-scala_${scala.major}.${scala.minor}</artifactId>
-  <properties>
-    <!-- Scala version is overridden by profiles but is needed here for the pom to be valid -->
-    <scala.major>2</scala.major>
-    <scala.minor>12</scala.minor>
-    <scala.patch>10</scala.patch>
-  </properties>
   <dependencies>
     <!-- Scala Standard Library -->
     <dependency>
