@@ -6,7 +6,6 @@
     <groupId>com.databricks</groupId>
     <artifactId>databricks-dbutils-scala-parent_2.12</artifactId>
     <version>0.1.4</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>databricks-dbutils-scala-examples</artifactId>
   <name>DBUtils for Scala Examples</name>
