@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <!-- Group and artifact identifiers, versioning -->
   <groupId>com.databricks</groupId>
-  <artifactId>databricks-dbutils-scala-parent_${scala.major}.${scala.minor}</artifactId>
+  <artifactId>databricks-dbutils-scala-parent_2.12</artifactId>
   <version>0.1.3</version>
   <packaging>pom</packaging>
   <name>DBUtils for Scala</name>
