@@ -21,7 +21,7 @@ The SDK logs helpful debugging information when debug logging is enabled. Set th
 
 **Other Information**
  - OS: [e.g. macOS]
- - Version of the SDK: [e.g. 0.1.3]
+ - Version of the SDK: [e.g. 0.1.4]
 
 **Additional context**
 Add any other context about the problem here.
