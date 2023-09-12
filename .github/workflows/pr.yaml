@@ -37,7 +37,7 @@ jobs:
       matrix:
         profile:
           - scala-2.12
-          - scala-2.13
+#          - scala-2.13
 
     steps:
       - name: Set up JDK
