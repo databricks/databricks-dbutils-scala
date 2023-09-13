@@ -28,7 +28,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Check formatting
-        run: mvn --errors --no-transfer-progress spotless:check -Pscala-2.12
+        run: mvn --errors --no-transfer-progress spotless:check -Pscala-2.13
 
   test:
     runs-on: ubuntu-latest
@@ -57,4 +57,4 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Run tests
-        run: mvn --errors --no-transfer-progress test -Pscala-2.12
+        run: mvn --errors --no-transfer-progress test -Pscala-2.13

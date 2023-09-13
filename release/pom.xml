@@ -4,11 +4,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.databricks</groupId>
-    <artifactId>databricks-dbutils-scala-parent_2.12</artifactId>
+    <artifactId>databricks-dbutils-scala-parent_2.13</artifactId>
     <version>0.1.4</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <artifactId>release-2.12</artifactId>
+  <artifactId>release-2.13</artifactId>
   <name>Release Module</name>
   <description>Module purely for releasing using Nexus staging plugin</description>
   <build>
