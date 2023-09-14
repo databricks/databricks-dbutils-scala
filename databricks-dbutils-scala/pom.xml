@@ -4,17 +4,17 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.databricks</groupId>
-    <artifactId>databricks-dbutils-scala-parent_2.13</artifactId>
+    <artifactId>databricks-dbutils-scala-parent_2.12</artifactId>
     <version>0.1.4</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <artifactId>databricks-dbutils-scala_2.13</artifactId>
+  <artifactId>databricks-dbutils-scala_2.12</artifactId>
   <dependencies>
     <!-- Scala Standard Library -->
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
-      <version>2.13.5</version>
+      <version>2.12.10</version>
     </dependency>
     <!-- Nullable annotation -->
     <dependency>
@@ -46,12 +46,12 @@
     <!-- Scalatest test harness -->
     <dependency>
       <groupId>org.scalactic</groupId>
-      <artifactId>scalactic_2.13</artifactId>
+      <artifactId>scalactic_2.12</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.13</artifactId>
+      <artifactId>scalatest_2.12</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -76,11 +76,11 @@
         <artifactId>scala-maven-plugin</artifactId>
         <version>4.4.0</version>
         <configuration>
-          <scalaVersion>2.13.5</scalaVersion>
+          <scalaVersion>2.12.10</scalaVersion>
           <compilerPlugins>
             <compilerPlugin>
               <groupId>com.artima.supersafe</groupId>
-              <artifactId>supersafe_2.13.5</artifactId>
+              <artifactId>supersafe_2.12.10</artifactId>
               <version>1.1.12</version>
             </compilerPlugin>
           </compilerPlugins>
