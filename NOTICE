@@ -1,0 +1,21 @@
+Copyright (2023) Databricks, Inc.
+
+This Software includes software developed at Databricks (https://www.databricks.com/) and its use is subject to the included LICENSE file.
+
+This Software contains code from the following open source projects, licensed under the BSD 3-Clause license:
+
+findbugsproject/findbugs/jsr-305 - https://code.google.com/archive/p/jsr-305/
+Copyright findbugs authors
+License - https://github.com/findbugsproject/findbugs/blob/master/findbugs/licenses/LICENSE-jsr305.txt
+
+This Software contains code from the following open source projects, licensed under the Apache 2.0 license:
+
+databricks/databricks-sdk-java - https://github.com/databricks/databricks-sdk-java
+Copyright (2023) Databricks, Inc.
+License - https://github.com/databricks/databricks-sdk-java/blob/main/LICENSE
+
+scala/scala - https://github.com/scala/scala
+Copyright (c) 2002-2023 EPFL
+Copyright (c) 2011-2023 Lightbend, Inc.
+License - https://github.com/scala/scala/blob/2.13.x/LICENSE
+
