@@ -9,7 +9,7 @@ The Databricks Utilities for Scala library is implemented mostly using the core 
 ## Contents
 
 - [Getting started](#getting-started)
-- [Migrating to DBUtils](#migrating to-sdk-for-scala-dbutils)
+- [Migrating to DBUtils](#migrating-to-dbutils)
 - [Limitations when running outside of Databricks Runtime](#limitations-when-running-outside-of-databricks-runtime)
 - [Interface stability](#interface-stability)
 - [Disclaimer](#disclaimer)
