@@ -15,11 +15,11 @@ private object Implicits {
      * field is accessed. This is very type-unsafe, so use with caution.
      *
      * @param field
-     * the name of the field
+     *   the name of the field
      * @tparam T
-     * the type of the field
+     *   the type of the field
      * @return
-     * the value of the field
+     *   the value of the field
      */
     def getField[T](field: String): T = {
       val f = o.getClass.getDeclaredField(field)
@@ -35,8 +35,8 @@ private object Implicits {
 }
 
 private class MethodCallAdapter(
-                                 val handleArgs: Seq[AnyRef] => Seq[AnyRef] = identity,
-                                 val convertResult: AnyRef => AnyRef = identity)
+    val handleArgs: Seq[AnyRef] => Seq[AnyRef] = identity,
+    val convertResult: AnyRef => AnyRef = identity)
 
 private object MethodCallAdapter {
   val IDENTITY = new MethodCallAdapter(identity, identity)
@@ -51,20 +51,20 @@ private object ProxyDBUtilsImpl {
   }
 
   def toPrimitiveClass(clazz: Class[_]): Class[_] = clazz match {
-    case c if c == classOf[java.lang.Boolean] => java.lang.Boolean.TYPE
-    case c if c == classOf[java.lang.Byte] => java.lang.Byte.TYPE
+    case c if c == classOf[java.lang.Boolean]   => java.lang.Boolean.TYPE
+    case c if c == classOf[java.lang.Byte]      => java.lang.Byte.TYPE
     case c if c == classOf[java.lang.Character] => java.lang.Character.TYPE
-    case c if c == classOf[java.lang.Double] => java.lang.Double.TYPE
-    case c if c == classOf[java.lang.Float] => java.lang.Float.TYPE
-    case c if c == classOf[java.lang.Integer] => java.lang.Integer.TYPE
-    case c if c == classOf[java.lang.Long] => java.lang.Long.TYPE
-    case c if c == classOf[java.lang.Short] => java.lang.Short.TYPE
-    case _ => clazz
+    case c if c == classOf[java.lang.Double]    => java.lang.Double.TYPE
+    case c if c == classOf[java.lang.Float]     => java.lang.Float.TYPE
+    case c if c == classOf[java.lang.Integer]   => java.lang.Integer.TYPE
+    case c if c == classOf[java.lang.Long]      => java.lang.Long.TYPE
+    case c if c == classOf[java.lang.Short]     => java.lang.Short.TYPE
+    case _                                      => clazz
   }
 
   def getProxyInstance[T: ClassTag](
-                                     backendInstance: AnyRef,
-                                     converters: Map[String, MethodCallAdapter] = Map.empty): T = {
+      backendInstance: AnyRef,
+      converters: Map[String, MethodCallAdapter] = Map.empty): T = {
     Proxy
       .newProxyInstance(
         getClass.getClassLoader,
@@ -88,12 +88,12 @@ private object ProxyDBUtilsImpl {
           val backendMethod = backendInstance.getClass.getMethods
             .find { m =>
               m.getName == method.getName && m.getParameterTypes.length == convertedArgs.length &&
-                m.getParameterTypes.zip(convertedArgs).forall { case (paramType, arg) =>
-                  // Either arg's class is the same as paramType, or arg's class is a subtype of paramType, or arg's
-                  // class is a boxed type and paramType is the corresponding primitive type. For example:
-                  paramType.isAssignableFrom(arg.getClass) ||
-                    (paramType.isPrimitive && paramType.isAssignableFrom(toPrimitiveClass(arg.getClass)))
-                }
+              m.getParameterTypes.zip(convertedArgs).forall { case (paramType, arg) =>
+                // Either arg's class is the same as paramType, or arg's class is a subtype of paramType, or arg's
+                // class is a boxed type and paramType is the corresponding primitive type. For example:
+                paramType.isAssignableFrom(arg.getClass) ||
+                (paramType.isPrimitive && paramType.isAssignableFrom(toPrimitiveClass(arg.getClass)))
+              }
             }
             .getOrElse {
               throw new NoSuchMethodException(
@@ -151,7 +151,7 @@ private object ProxyDBUtilsImpl {
   }
 }
 
-class ProxyDBUtilsImpl private[dbutils](baseObj: AnyRef) extends DBUtils {
+class ProxyDBUtilsImpl private[dbutils] (baseObj: AnyRef) extends DBUtils {
   def this() = this(ProxyDBUtilsImpl.getDbUtils)
 
   private val dbutils = getProxyInstance[DBUtils](baseObj)
@@ -200,14 +200,16 @@ class ProxyDBUtilsImpl private[dbutils](baseObj: AnyRef) extends DBUtils {
   override val library: LibraryUtils = getProxyInstance[LibraryUtils](baseObj.getField("library"))
   override val credentials: DatabricksCredentialUtils =
     getProxyInstance[DatabricksCredentialUtils](baseObj.getField("credentials"))
-  override val jobs: JobsUtils = getProxyInstance[JobsUtils](baseObj.getField("jobs"), Map("taskValues" -> new MethodCallAdapter(
-    convertResult = { taskValues =>
-      getProxyInstance[TaskValuesUtils](taskValues, Map(
-        "getContext" -> new MethodCallAdapter(convertResult = ProxyDBUtilsImpl.fromInternalCommandContext),
-        "setContext" -> new MethodCallAdapter(handleArgs = args =>
-          Seq(ProxyDBUtilsImpl.toInternalCommandContext(args.head)))))
-    }))
-  )
+  override val jobs: JobsUtils = getProxyInstance[JobsUtils](
+    baseObj.getField("jobs"),
+    Map("taskValues" -> new MethodCallAdapter(convertResult = { taskValues =>
+      getProxyInstance[TaskValuesUtils](
+        taskValues,
+        Map(
+          "getContext" -> new MethodCallAdapter(convertResult = ProxyDBUtilsImpl.fromInternalCommandContext),
+          "setContext" -> new MethodCallAdapter(handleArgs = args =>
+            Seq(ProxyDBUtilsImpl.toInternalCommandContext(args.head)))))
+    })))
   // Not in DBR 7.3
   override val data: DataUtils = getProxyInstance[DataUtils](baseObj.getField("data"))
 }

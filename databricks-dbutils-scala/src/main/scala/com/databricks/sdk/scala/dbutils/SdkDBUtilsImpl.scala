@@ -20,21 +20,31 @@ private object SdkDBUtilsImpl {
 /** Help is a no-op in the SDK version of DBUtils. */
 trait NoHelp extends WithHelpMethods {
   override def help(): Unit = {}
+
   override def help(moduleOrMethod: String): Unit = {}
 }
 
 class SdkDBUtilsImpl(config: DatabricksConfig) extends DBUtils with NoHelp {
   private val client = new WorkspaceClient(config)
+
   def this() = this(new DatabricksConfig())
 
   override def widgets: WidgetsUtils = SdkDBUtilsImpl.unsupportedField("widgets")
+
   override def meta: MetaUtils = SdkDBUtilsImpl.unsupportedField("meta")
+
   override val fs: DbfsUtils = new SdkDbfsUtils(client)
+
   override def notebook: NotebookUtils = SdkDBUtilsImpl.unsupportedField("notebook")
+
   override def secrets: SecretUtils = new SdkSecretsUtils(client)
+
   override def library: LibraryUtils = SdkDBUtilsImpl.unsupportedField("library")
+
   override def credentials: DatabricksCredentialUtils = SdkDBUtilsImpl.unsupportedField("credentials")
+
   override val jobs: JobsUtils = new SdkJobsUtils
+
   override def data: DataUtils = SdkDBUtilsImpl.unsupportedField("data")
 }
 
@@ -160,13 +170,14 @@ private class SdkJobsUtils extends JobsUtils with NoHelp {
 private class SdkTaskValues extends TaskValuesUtils with NoHelp {
   private var commandContext =
     CommandContext()
+
   /**
    * Sets a task value on the current task run. This method is a no-op if used outside of the job context.
    *
    * @param key
-   * the task value's key
+   *   the task value's key
    * @param value
-   * the value to be stored (must be JSON-serializable)
+   *   the value to be stored (must be JSON-serializable)
    */
   override def set(key: String, value: Any): Unit = throw new NotImplementedError("set is not supported in Scala.")
 
@@ -174,15 +185,15 @@ private class SdkTaskValues extends TaskValuesUtils with NoHelp {
    * Returns the latest task value that belongs to the current job run.
    *
    * @param taskKey
-   * the task key of the task value
+   *   the task key of the task value
    * @param key
-   * the key of the task value
+   *   the key of the task value
    * @param default
-   * the value to return when called inside of a job context if the task value does not exist (must not be None)
+   *   the value to return when called inside of a job context if the task value does not exist (must not be None)
    * @param debugValue
-   * the value to return when called outside of a job context (must not be None)
+   *   the value to return when called outside of a job context (must not be None)
    * @return
-   * the task value (if it exists) when called inside of a job context
+   *   the task value (if it exists) when called inside of a job context
    */
   override def get(taskKey: String, key: String, default: Option[Any], debugValue: Option[Any]): Any =
     throw new NotImplementedError("get is not supported in Scala.")
