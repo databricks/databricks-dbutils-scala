@@ -15,7 +15,9 @@ case class TestDBUtils(
     data: DataUtils = null,
     jobs: TestJobsUtils = null)
 
-case class TestJobsUtils(taskValues: TaskValuesUtils = null)
+case class TestJobsUtils(taskValuesObj: TaskValuesUtils = null) {
+  def taskValues: TaskValuesUtils = taskValuesObj
+}
 
 class ProxyDbfsTest extends AnyFlatSpec {
   "dbutils.library.restartPython()" should "call restartPython()" in {
@@ -63,7 +65,7 @@ class ProxyDbfsTest extends AnyFlatSpec {
     when(proxyTaskValues.get("taskKey", "key", Option("value"), Option("value")))
       .asInstanceOf[UseSingleArg]
       .thenReturn("test")
-    val proxyJobs = new TestJobsUtils(proxyTaskValues)
+    val proxyJobs = TestJobsUtils(proxyTaskValues)
     val proxyBackend = TestDBUtils(jobs = proxyJobs)
     val proxyDbUtils = new ProxyDBUtilsImpl(proxyBackend)
     val res = proxyDbUtils.jobs.taskValues.get("taskKey", "key", Some("value"), Some("value"))
