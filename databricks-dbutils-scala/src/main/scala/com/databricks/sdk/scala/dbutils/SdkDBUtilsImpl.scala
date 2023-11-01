@@ -190,8 +190,7 @@ private class SdkTaskValues extends TaskValuesUtils with NoHelp {
   override def get(taskKey: String, key: String, default: Option[Any], debugValue: Option[Any]): Any =
     throw new NotImplementedError("get is not supported in Scala.")
 
-  override def setJson(key: String, value: String): Unit =
-    throw new NotImplementedError("setJson is not supported for local development in Scala.")
+  override def setJson(key: String, value: String): Unit = {}
 
   override def getJson(taskKey: String, key: String): Seq[String] = Seq.empty
 
