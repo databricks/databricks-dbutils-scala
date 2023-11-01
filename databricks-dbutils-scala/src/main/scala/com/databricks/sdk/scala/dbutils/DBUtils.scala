@@ -543,19 +543,19 @@ trait DataUtils extends Serializable with WithHelpMethods {
 case class RunId private[dbutils] (id: Long)
 case class CommandContext private[dbutils] (
     /** The run ID of the root run in a workflow. */
-    rootRunId: Option[RunId] = None,
+    rootRunId: Option[RunId],
 
     /** The run ID of the current run in a workflow. */
-    currentRunId: Option[RunId] = None,
+    currentRunId: Option[RunId],
 
     /** Unique command identifier that is injected by the driver. */
-    jobGroup: Option[String] = None,
+    jobGroup: Option[String],
 
     /** Attribution tags injected by the webapp. */
-    tags: Map[String, String] = Map.empty,
+    tags: Map[String, String],
 
     /**
      * Other fields that are propagated opaquely through the Jobs daemon and driver. We represent this as a string map
      * to ensure that fields are propagated correctly through even old versions of Jobs daemon and driver packages.
      */
-    extraContext: Map[String, String] = Map.empty)
+    extraContext: Map[String, String])

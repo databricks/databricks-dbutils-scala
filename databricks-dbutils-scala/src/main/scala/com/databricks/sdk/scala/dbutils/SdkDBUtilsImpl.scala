@@ -30,21 +30,13 @@ class SdkDBUtilsImpl(config: DatabricksConfig) extends DBUtils with NoHelp {
   def this() = this(new DatabricksConfig())
 
   override def widgets: WidgetsUtils = SdkDBUtilsImpl.unsupportedField("widgets")
-
   override def meta: MetaUtils = SdkDBUtilsImpl.unsupportedField("meta")
-
   override val fs: DbfsUtils = new SdkDbfsUtils(client)
-
   override def notebook: NotebookUtils = SdkDBUtilsImpl.unsupportedField("notebook")
-
   override def secrets: SecretUtils = new SdkSecretsUtils(client)
-
   override def library: LibraryUtils = SdkDBUtilsImpl.unsupportedField("library")
-
   override def credentials: DatabricksCredentialUtils = SdkDBUtilsImpl.unsupportedField("credentials")
-
   override val jobs: JobsUtils = new SdkJobsUtils
-
   override def data: DataUtils = SdkDBUtilsImpl.unsupportedField("data")
 }
 
@@ -169,7 +161,7 @@ private class SdkJobsUtils extends JobsUtils with NoHelp {
 
 private class SdkTaskValues extends TaskValuesUtils with NoHelp {
   private var commandContext =
-    CommandContext()
+    CommandContext(rootRunId = None, currentRunId = None, jobGroup = None, tags = Map.empty, extraContext = Map.empty)
 
   /**
    * Sets a task value on the current task run. This method is a no-op if used outside of the job context.
@@ -209,7 +201,5 @@ private class SdkTaskValues extends TaskValuesUtils with NoHelp {
 
   override def setContext(context: CommandContext): Unit = {
     commandContext = context
-    println(context)
-    println(commandContext)
   }
 }
