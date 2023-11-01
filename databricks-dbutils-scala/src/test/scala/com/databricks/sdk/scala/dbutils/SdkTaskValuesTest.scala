@@ -5,17 +5,8 @@ import org.scalatest.matchers.should.Matchers.{be, convertToAnyShouldWrapper}
 
 class SdkTaskValuesTest extends AnyFlatSpec {
   private val taskValues = new SdkTaskValues
-  "When outside of DBR, TaskValuesUtils.getContext" should "return default context initially" in {
-    taskValues.getContext should be(
-      CommandContext(
-        rootRunId = None,
-        currentRunId = None,
-        jobGroup = None,
-        tags = Map.empty,
-        extraContext = Map.empty))
-  }
 
-  "When outside of DBR, TaskValuesUtils.getContext" should "return context, which was set" in {
+  "When outside of DBR, TaskValuesUtils.getContext and TaskValuesUtils.setContext" should "throw error" in {
     val context = CommandContext(
       rootRunId = None,
       currentRunId = None,
@@ -23,9 +14,17 @@ class SdkTaskValuesTest extends AnyFlatSpec {
       tags = Map.empty,
       extraContext = Map("test" -> "test"))
 
-    taskValues.setContext(context)
+    val setE = intercept[NotImplementedError] {
+      taskValues.setContext(context)
+    }
 
-    taskValues.getContext should be(context)
+    setE.getMessage should be("setContext is not supported outside of DBR.")
+
+    val getE = intercept[NotImplementedError] {
+      taskValues.getContext()
+    }
+
+    getE.getMessage should be("getContext is not supported outside of DBR.")
   }
 
   "When outside of DBR, TaskValuesUtils.get and TaskValues.set" should "throw error" in {

@@ -160,8 +160,6 @@ private class SdkJobsUtils extends JobsUtils with NoHelp {
 }
 
 private class SdkTaskValues extends TaskValuesUtils with NoHelp {
-  private var commandContext =
-    CommandContext(rootRunId = None, currentRunId = None, jobGroup = None, tags = Map.empty, extraContext = Map.empty)
 
   /**
    * Sets a task value on the current task run. This method is a no-op if used outside of the job context.
@@ -195,10 +193,10 @@ private class SdkTaskValues extends TaskValuesUtils with NoHelp {
   override def getJson(taskKey: String, key: String): Seq[String] = Seq.empty
 
   override def getContext(): CommandContext = {
-    commandContext
+    throw new NotImplementedError("getContext is not supported outside of DBR.")
   }
 
   override def setContext(context: CommandContext): Unit = {
-    commandContext = context
+    throw new NotImplementedError("setContext is not supported outside of DBR.")
   }
 }
