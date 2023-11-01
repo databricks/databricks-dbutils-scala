@@ -37,6 +37,7 @@ private object Implicits {
 private class MethodCallAdapter(
     val handleArgs: Seq[AnyRef] => Seq[AnyRef] = identity,
     val convertResult: AnyRef => AnyRef = identity)
+
 private object MethodCallAdapter {
   val IDENTITY = new MethodCallAdapter(identity, identity)
 }
@@ -152,6 +153,7 @@ private object ProxyDBUtilsImpl {
 
 class ProxyDBUtilsImpl private[dbutils] (baseObj: AnyRef) extends DBUtils {
   def this() = this(ProxyDBUtilsImpl.getDbUtils)
+
   private val dbutils = getProxyInstance[DBUtils](baseObj)
 
   override def help(): Unit = dbutils.help()
@@ -198,21 +200,16 @@ class ProxyDBUtilsImpl private[dbutils] (baseObj: AnyRef) extends DBUtils {
   override val library: LibraryUtils = getProxyInstance[LibraryUtils](baseObj.getField("library"))
   override val credentials: DatabricksCredentialUtils =
     getProxyInstance[DatabricksCredentialUtils](baseObj.getField("credentials"))
-  override val jobs: JobsUtils = new ProxyJobsUtils(baseObj.getField("jobs"))
+  override val jobs: JobsUtils = getProxyInstance[JobsUtils](
+    baseObj.getField("jobs"),
+    Map("taskValues" -> new MethodCallAdapter(convertResult = { taskValues =>
+      getProxyInstance[TaskValuesUtils](
+        taskValues,
+        Map(
+          "getContext" -> new MethodCallAdapter(convertResult = ProxyDBUtilsImpl.fromInternalCommandContext),
+          "setContext" -> new MethodCallAdapter(handleArgs = args =>
+            Seq(ProxyDBUtilsImpl.toInternalCommandContext(args.head)))))
+    })))
   // Not in DBR 7.3
   override val data: DataUtils = getProxyInstance[DataUtils](baseObj.getField("data"))
-}
-
-private class ProxyJobsUtils(jobs: AnyRef) extends JobsUtils {
-  private val jobsProxy = getProxyInstance[JobsUtils](jobs)
-  override def help(): Unit = jobsProxy.help()
-
-  override def help(moduleOrMethod: String): Unit = jobsProxy.help(moduleOrMethod)
-
-  override def taskValues: TaskValuesUtils = getProxyInstance[TaskValuesUtils](
-    jobs.getField("taskValues"),
-    Map(
-      "getContext" -> new MethodCallAdapter(convertResult = ProxyDBUtilsImpl.fromInternalCommandContext),
-      "setContext" -> new MethodCallAdapter(handleArgs = args =>
-        Seq(ProxyDBUtilsImpl.toInternalCommandContext(args.head)))))
 }

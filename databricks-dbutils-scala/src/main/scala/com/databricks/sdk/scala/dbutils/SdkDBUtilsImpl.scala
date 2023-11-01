@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import scala.collection.JavaConverters._
 
-private object SdkDbfsUtilsImpl {
+private object SdkDBUtilsImpl {
   def unsupportedMethod(methodName: String): Nothing =
     throw new UnsupportedOperationException(s"Method $methodName is not supported in the SDK version of DBUtils.")
 
@@ -20,26 +20,28 @@ private object SdkDbfsUtilsImpl {
 /** Help is a no-op in the SDK version of DBUtils. */
 trait NoHelp extends WithHelpMethods {
   override def help(): Unit = {}
+
   override def help(moduleOrMethod: String): Unit = {}
 }
 
 class SdkDBUtilsImpl(config: DatabricksConfig) extends DBUtils with NoHelp {
   private val client = new WorkspaceClient(config)
+
   def this() = this(new DatabricksConfig())
 
-  override def widgets: WidgetsUtils = SdkDbfsUtilsImpl.unsupportedField("widgets")
-  override def meta: MetaUtils = SdkDbfsUtilsImpl.unsupportedField("meta")
+  override def widgets: WidgetsUtils = SdkDBUtilsImpl.unsupportedField("widgets")
+  override def meta: MetaUtils = SdkDBUtilsImpl.unsupportedField("meta")
   override val fs: DbfsUtils = new SdkDbfsUtils(client)
-  override def notebook: NotebookUtils = SdkDbfsUtilsImpl.unsupportedField("notebook")
+  override def notebook: NotebookUtils = SdkDBUtilsImpl.unsupportedField("notebook")
   override def secrets: SecretUtils = new SdkSecretsUtils(client)
-  override def library: LibraryUtils = SdkDbfsUtilsImpl.unsupportedField("library")
-  override def credentials: DatabricksCredentialUtils = SdkDbfsUtilsImpl.unsupportedField("credentials")
-  override def jobs: JobsUtils = SdkDbfsUtilsImpl.unsupportedField("jobs")
-  override def data: DataUtils = SdkDbfsUtilsImpl.unsupportedField("data")
+  override def library: LibraryUtils = SdkDBUtilsImpl.unsupportedField("library")
+  override def credentials: DatabricksCredentialUtils = SdkDBUtilsImpl.unsupportedField("credentials")
+  override val jobs: JobsUtils = new SdkJobsUtils
+  override def data: DataUtils = SdkDBUtilsImpl.unsupportedField("data")
 }
 
 private class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
-  override def ls(dir: String): Seq[FileInfo] = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.ls")
+  override def ls(dir: String): Seq[FileInfo] = SdkDBUtilsImpl.unsupportedMethod("dbutils.fs.ls")
 
   override def rm(file: String, recurse: Boolean): Boolean = {
     if (recurse) {
@@ -50,7 +52,7 @@ private class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
     true
   }
 
-  override def mkdirs(dir: String): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.mkdirs")
+  override def mkdirs(dir: String): Boolean = SdkDBUtilsImpl.unsupportedMethod("dbutils.fs.mkdirs")
 
   override def cp(from: String, to: String, recurse: Boolean): Boolean = {
     if (recurse) {
@@ -119,20 +121,20 @@ private class SdkDbfsUtils(w: WorkspaceClient) extends DbfsUtils with NoHelp {
       mountPoint: String,
       encryptionType: String,
       owner: String,
-      extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.mount")
+      extraConfigs: Map[String, String]): Boolean = SdkDBUtilsImpl.unsupportedMethod("dbutils.fs.mount")
 
   override def updateMount(
       source: String,
       mountPoint: String,
       encryptionType: String,
       owner: String,
-      extraConfigs: Map[String, String]): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.updateMount")
+      extraConfigs: Map[String, String]): Boolean = SdkDBUtilsImpl.unsupportedMethod("dbutils.fs.updateMount")
 
-  override def refreshMounts(): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.refreshMounts")
+  override def refreshMounts(): Boolean = SdkDBUtilsImpl.unsupportedMethod("dbutils.fs.refreshMounts")
 
-  override def mounts(): Seq[MountInfo] = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.mounts")
+  override def mounts(): Seq[MountInfo] = SdkDBUtilsImpl.unsupportedMethod("dbutils.fs.mounts")
 
-  override def unmount(mountPoint: String): Boolean = SdkDbfsUtilsImpl.unsupportedMethod("dbutils.fs.unmount")
+  override def unmount(mountPoint: String): Boolean = SdkDBUtilsImpl.unsupportedMethod("dbutils.fs.unmount")
 }
 
 private class SdkSecretsUtils(client: WorkspaceClient) extends SecretUtils with NoHelp {
@@ -151,4 +153,50 @@ private class SdkSecretsUtils(client: WorkspaceClient) extends SecretUtils with 
     client.secrets().listScopes().asScala.toSeq.map { scope =>
       SecretScope(scope.getName)
     }
+}
+
+private class SdkJobsUtils extends JobsUtils with NoHelp {
+  override val taskValues: TaskValuesUtils = new SdkTaskValues
+}
+
+private class SdkTaskValues extends TaskValuesUtils with NoHelp {
+
+  /**
+   * Sets a task value on the current task run. This method is a no-op if used outside of the job context.
+   *
+   * @param key
+   *   the task value's key
+   * @param value
+   *   the value to be stored (must be JSON-serializable)
+   */
+  override def set(key: String, value: Any): Unit = throw new NotImplementedError("set is not supported in Scala.")
+
+  /**
+   * Returns the latest task value that belongs to the current job run.
+   *
+   * @param taskKey
+   *   the task key of the task value
+   * @param key
+   *   the key of the task value
+   * @param default
+   *   the value to return when called inside of a job context if the task value does not exist (must not be None)
+   * @param debugValue
+   *   the value to return when called outside of a job context (must not be None)
+   * @return
+   *   the task value (if it exists) when called inside of a job context
+   */
+  override def get(taskKey: String, key: String, default: Option[Any], debugValue: Option[Any]): Any =
+    throw new NotImplementedError("get is not supported in Scala.")
+
+  override def setJson(key: String, value: String): Unit = {}
+
+  override def getJson(taskKey: String, key: String): Seq[String] = Seq.empty
+
+  override def getContext(): CommandContext = {
+    throw new NotImplementedError("getContext is not supported outside of DBR.")
+  }
+
+  override def setContext(context: CommandContext): Unit = {
+    throw new NotImplementedError("setContext is not supported outside of DBR.")
+  }
 }
