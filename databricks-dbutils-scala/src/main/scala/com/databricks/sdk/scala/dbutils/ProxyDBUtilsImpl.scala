@@ -90,7 +90,7 @@ private object ProxyDBUtilsImpl {
               m.getName == method.getName && m.getParameterTypes.length == convertedArgs.length &&
               m.getParameterTypes.zip(convertedArgs).forall { case (paramType, arg) =>
                 // Argument shouldn't be null and primitive
-                if(arg == null && paramType.isPrimitive){
+                if (arg == null && paramType.isPrimitive) {
                   throw new NoSuchMethodException("Unexpected null argument for primitive type")
                 }
                 // Either arg is null but non primitive or arg's class is the same as paramType and , or arg's class is a subtype of paramType, or arg's
