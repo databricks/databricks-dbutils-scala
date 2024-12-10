@@ -89,9 +89,13 @@ private object ProxyDBUtilsImpl {
             .find { m =>
               m.getName == method.getName && m.getParameterTypes.length == convertedArgs.length &&
               m.getParameterTypes.zip(convertedArgs).forall { case (paramType, arg) =>
-                // Either arg's class is the same as paramType, or arg's class is a subtype of paramType, or arg's
+                // Argument shouldn't be null and primitive
+                if(arg == null && paramType.isPrimitive){
+                  throw new NoSuchMethodException("Unexpected null argument for primitive type")
+                }
+                // Either arg is null but non primitive or arg's class is the same as paramType and , or arg's class is a subtype of paramType, or arg's
                 // class is a boxed type and paramType is the corresponding primitive type. For example:
-                paramType.isAssignableFrom(arg.getClass) ||
+                (arg == null && !paramType.isPrimitive) || (paramType.isAssignableFrom(arg.getClass)) ||
                 (paramType.isPrimitive && paramType.isAssignableFrom(toPrimitiveClass(arg.getClass)))
               }
             }
