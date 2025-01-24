@@ -101,7 +101,8 @@ private object ProxyDBUtilsImpl {
           val backendMethod = backendInstance.getClass.getMethods
             .find { m =>
               m.getName == method.getName && m.getParameterTypes.length == convertedArgs.length &&
-              m.getParameterTypes.zip(convertedArgs).forall { case (paramType, arg) => isParameterTypeCompatible(paramType, arg)
+              m.getParameterTypes.zip(convertedArgs).forall { case (paramType, arg) =>
+                isParameterTypeCompatible(paramType, arg)
               }
             }
             .getOrElse {
