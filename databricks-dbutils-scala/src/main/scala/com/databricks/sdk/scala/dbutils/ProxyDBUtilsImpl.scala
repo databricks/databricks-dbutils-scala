@@ -60,7 +60,8 @@ private object ProxyDBUtilsImpl {
     // 1. Argument is null but non-primitive.
     // 2. Argument's class is the same as paramType, or argument's class is a subtype of paramType.
     // 3. Argument's class is a boxed type and paramType is the corresponding primitive type.
-    (arg == null && !paramType.isPrimitive) || (paramType.isAssignableFrom(arg.getClass)) || (paramType.isPrimitive && paramType.isAssignableFrom(toPrimitiveClass(arg.getClass)))
+    (arg == null && !paramType.isPrimitive) || (paramType.isAssignableFrom(
+      arg.getClass)) || (paramType.isPrimitive && paramType.isAssignableFrom(toPrimitiveClass(arg.getClass)))
   }
 
   def toPrimitiveClass(clazz: Class[_]): Class[_] = clazz match {
