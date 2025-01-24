@@ -50,6 +50,19 @@ private object ProxyDBUtilsImpl {
     threadLocal.get()
   }
 
+  def isParameterTypeCompatible(paramType: Class[_], arg: Any): Boolean = {
+    // Argument shouldn't be null and primitive
+    if (arg == null && paramType.isPrimitive) {
+      throw new NoSuchMethodException("Unexpected null argument for primitive type")
+    }
+
+    // Either arg is null but non primitive or arg's class is the same as paramType and or arg's class is a subtype of paramType,
+    // or arg's class is a boxed type and paramType is the corresponding primitive type.
+    (arg == null && !paramType.isPrimitive) ||
+      (paramType.isAssignableFrom(arg.getClass)) ||
+      (paramType.isPrimitive && paramType.isAssignableFrom(toPrimitiveClass(arg.getClass)))
+  }
+
   def toPrimitiveClass(clazz: Class[_]): Class[_] = clazz match {
     case c if c == classOf[java.lang.Boolean]   => java.lang.Boolean.TYPE
     case c if c == classOf[java.lang.Byte]      => java.lang.Byte.TYPE
@@ -89,10 +102,7 @@ private object ProxyDBUtilsImpl {
             .find { m =>
               m.getName == method.getName && m.getParameterTypes.length == convertedArgs.length &&
               m.getParameterTypes.zip(convertedArgs).forall { case (paramType, arg) =>
-                // Either arg's class is the same as paramType, or arg's class is a subtype of paramType, or arg's
-                // class is a boxed type and paramType is the corresponding primitive type. For example:
-                paramType.isAssignableFrom(arg.getClass) ||
-                (paramType.isPrimitive && paramType.isAssignableFrom(toPrimitiveClass(arg.getClass)))
+                isParameterTypeCompatible(paramType, arg)
               }
             }
             .getOrElse {

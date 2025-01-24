@@ -103,4 +103,26 @@ class ProxyDbfsTest extends AnyFlatSpec {
     assert(res === Seq(SecretScope("testScope")))
     verify(proxySecrets).listScopes()
   }
+
+  "isParameterTypeCompatible" should "return true for null argument and non-primitive parameter type" in {
+    val result = ProxyDBUtilsImpl.isParameterTypeCompatible(classOf[String], null)
+    assert(result == true)
+  }
+
+  "isParameterTypeCompatible" should "return true when argument matches parameter type exactly" in {
+    val result = ProxyDBUtilsImpl.isParameterTypeCompatible(classOf[String], "test")
+    assert(result == true)
+  }
+
+  "isParameterTypeCompatible" should "return false when argument is incompatible with parameter type" in {
+    val result = ProxyDBUtilsImpl.isParameterTypeCompatible(classOf[Int], "test")
+    assert(result == false)
+  }
+
+  "isParameterTypeCompatible" should "throw NoSuchMethodException with the correct message for null argument and primitive parameter type" in {
+    val exception = intercept[NoSuchMethodException] {
+      ProxyDBUtilsImpl.isParameterTypeCompatible(classOf[Int], null)
+    }
+    assert(exception.getMessage == "Unexpected null argument for primitive type")
+  }
 }
