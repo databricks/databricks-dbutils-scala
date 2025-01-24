@@ -56,8 +56,10 @@ private object ProxyDBUtilsImpl {
       throw new NoSuchMethodException("Unexpected null argument for primitive type")
     }
 
-    // Either arg is null but non primitive or arg's class is the same as paramType and or arg's class is a subtype of paramType,
-    // or arg's class is a boxed type and paramType is the corresponding primitive type.
+    // The following cases are valid:
+    // 1. Argument is null but non-primitive.
+    // 2. Argument's class is the same as paramType, or argument's class is a subtype of paramType.
+    // 3. Argument's class is a boxed type and paramType is the corresponding primitive type.
     (arg == null && !paramType.isPrimitive) || (paramType.isAssignableFrom(arg.getClass)) || (paramType.isPrimitive && paramType.isAssignableFrom(toPrimitiveClass(arg.getClass)))
   }
 
