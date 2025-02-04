@@ -95,7 +95,7 @@ Testing the changes end to end is not straight forward since we don't have a ded
    1. Make sure the changes are in the local branch you would be building the jar from.
    2. From repository root, run: `$ mvn package`
    3. The jars would be build under the following directory from root: `databricks-dbutils-scala/target`
-   4. Upload the jar to test to UC Volumes. This would be `databricks-dbutils-scala_2.12-0.1.4.jar` in most cases.
+   4. Upload the jar to test to UC Volumes. For building on 0.1.4 and using scala 1.12, this would be `databricks-dbutils-scala_2.12-0.1.4.jar` in most cases.
 2. Upload the jar in Volumes
    1. Open the Databricks console.
    2. Go to the volume you would like to upload to and click: `Upload to this volume`.
