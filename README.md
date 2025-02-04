@@ -87,7 +87,6 @@ This section contains the information regarding adding a change in the repositor
 1. Create a PR with the change.
 2. Make sure the changes are unit tested.
 3. Make sure the changes have been tested end to end. Please see the section below for end to end manual testing.
-4. Add any of the existing contributors for review.
 
 ### Manually testing the changes over DBUtils end to end
 Testing the change end to end is not straight forward since we don't have a dedicated infrastructure for the repository yet. Please look at the steps below for manually testing a change end to end.
