@@ -15,7 +15,6 @@ The Databricks Utilities for Scala library is implemented mostly using the core 
 - [Contributing](#contributing)
 - [Disclaimer](#disclaimer)
 
-
 ## Getting started
 
 You can install Databricks Utilities for Scala by adding the following to your `pom.xml`:
