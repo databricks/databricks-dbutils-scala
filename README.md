@@ -12,7 +12,9 @@ The Databricks Utilities for Scala library is implemented mostly using the core 
 - [Migrating to DBUtils](#migrating-to-dbutils)
 - [Limitations when running outside of Databricks Runtime](#limitations-when-running-outside-of-databricks-runtime)
 - [Interface stability](#interface-stability)
+- [Contributing](#contributing)
 - [Disclaimer](#disclaimer)
+
 
 ## Getting started
 
@@ -79,6 +81,41 @@ The DBUtils interface provides many convenient utilities for interacting with Da
 ## Interface stability
 
 During the [Experimental](https://docs.databricks.com/release-notes/release-types.html) period, Databricks is actively working on stabilizing the Databricks Utilities for Scala's interfaces. You are highly encouraged to pin the exact dependency version and read the [changelog](https://github.com/databricks/databricks-sdk-java/blob/main/CHANGELOG.md) where Databricks documents the changes. Databricks may have minor [documented](https://github.com/databricks/databricks-sdk-java/blob/main/CHANGELOG.md) backward-incompatible changes, such as renaming the methods or some type names to bring more consistency.
+
+## Contributing
+This section contains the information regarding adding a change in the repository.
+1. Create a PR with the change.
+2. Make sure the changes are unit tested.
+3. Make sure the changes have been tested end to end. Please see the section below for end to end manual testing.
+4. Add any of the existing contributors for review.
+
+### Manually testing the changes over DBUtils end to end
+Testing the change end to end is not straight forward since we don't have a dedicated infrastructure for the repository yet. Please look at the steps below for manually testing a change end to end.
+1. Build and upload the local jar to Databricks Volumes. This will be used later on to install the library on the cluster.
+   1. Make sure the changes are in the local branch you would be building the jar from.
+   2. From repository root, run: `$ mvn package`
+   3. The jars would be build under the following directory from root: `databricks-dbutils-scala/target`
+   4. Upload the jar to test to UC Volumes. This would be `databricks-dbutils-scala_2.12-0.1.4.jar` in most cases.
+2. Upload the jar in Volumes
+   1. Open the databricks console.
+   2. Go to the volumes and click: `Upload to this volume`
+   3. Select the jar mentioned above in step 1.4.
+3. Add an instance profile if needed. For example in case of interacting with S3.
+   1. On Databricks console, go to User Settings -> Security -> Manage
+   2. Click on Add instance profile
+   3. Add the instance profile you need.
+4. Create a cluster with the library:
+   1. On Databricks console, go to Compute -> Create Compute
+   2. Attach the instance profile (step - 3.3).
+   3. Install the library from UC Volumes (step - 2.3)
+5. Create a notebook with the code to test the end to end flow
+   1.On Databricks console, create a notebook i.e. New -> Notebook
+   2. Write the code to test the end to end flow, example: 
+   ```scala
+      import com.databricks.sdk.scala.dbutils.DBUtils
+      DBUtils.getDBUtils().fs.mount("s3a://bucket-name", "/mnt/mount-point")
+   ```
+   3. Connect the cluster (step - 4.3) to the notebook and run
 
 ## Disclaimer
 - The product is in preview and not intended to be used in production;
