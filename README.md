@@ -88,7 +88,7 @@ This section contains the information regarding adding a change in the repositor
 2. Make sure the changes are unit tested.
 3. Make sure the changes have been tested end to end. Please see the section below for end to end manual testing.
 
-### Manually testing the changes over DBUtils end to end
+### Manually testing the changes end to end
 Testing the change end to end is not straight forward since we don't have a dedicated infrastructure for the repository yet. Please look at the steps below for manually testing a change end to end.
 1. Build and upload the local jar to Databricks Volumes. This will be used later on to install the library on the cluster.
    1. Make sure the changes are in the local branch you would be building the jar from.
