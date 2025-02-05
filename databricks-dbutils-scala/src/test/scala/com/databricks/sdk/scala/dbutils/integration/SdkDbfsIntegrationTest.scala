@@ -13,8 +13,7 @@ class SdkDbfsIntegrationTest extends VolumeIntegrationTestBase {
       dbutils.fs.put(testFilePath, testFile)
     }
 
-    e.getMessage should be(
-      "Invalid path: unsupported first path component: tmp")
+    e.getMessage should be("Invalid path: unsupported first path component: tmp")
   }
 
   // More tests to verify that we can't copy/move outside or across UC interface or delete outside of DBFS
