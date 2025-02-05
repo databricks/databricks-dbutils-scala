@@ -109,7 +109,7 @@ Testing the changes end to end is not straight forward since we don't have a ded
    2. Attach the instance profile (step - 3.3).
    3. Install the library from UC Volumes (step - 2.3)
 5. Create a notebook with the code to test the end to end flow.
-   1.On Databricks console, create a notebook, click on `New` -> `Notebook`
+   1. On Databricks console, create a notebook, click on `New` -> `Notebook`
    2. Write the code to test the end to end flow, example: 
    ```scala
       import com.databricks.sdk.scala.dbutils.DBUtils
