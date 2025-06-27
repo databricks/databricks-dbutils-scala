@@ -463,6 +463,21 @@ trait DatabricksCredentialUtils extends Serializable with WithHelpMethods {
    * }}}
    */
   def showRoles(): java.util.List[String]
+
+  /**
+   * Get an instance of cloud-specific Service Credentials Provider.
+   *
+   * Return type is an Object because the actual type is cloud-specific
+   * (e.g. AWSCredentialsProvider on AWS, TokenCredential on Azure).
+   *
+   * Example:
+   * {{{
+   * dbutils.credentials.getServiceCredentialsProvider("your-cred").asInstanceOf[AWSCredentialsProvider]
+   * }}}
+   *
+   * See https://docs.databricks.com/aws/en/connect/unity-catalog/cloud-services/use-service-credentials for additional examples.
+   */
+  def getServiceCredentialsProvider(credentialName: String = null): Object  
 }
 
 /**
