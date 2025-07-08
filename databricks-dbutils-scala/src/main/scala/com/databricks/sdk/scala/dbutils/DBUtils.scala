@@ -467,8 +467,8 @@ trait DatabricksCredentialUtils extends Serializable with WithHelpMethods {
   /**
    * Get an instance of cloud-specific Service Credentials Provider.
    *
-   * Return type is an Object because the actual type is cloud-specific
-   * (e.g. AWSCredentialsProvider on AWS, TokenCredential on Azure).
+   * Return type is an Object because the actual type is cloud-specific (e.g. AWSCredentialsProvider on AWS,
+   * TokenCredential on Azure).
    *
    * Example:
    * {{{
