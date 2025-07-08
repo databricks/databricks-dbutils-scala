@@ -475,9 +475,10 @@ trait DatabricksCredentialUtils extends Serializable with WithHelpMethods {
    * dbutils.credentials.getServiceCredentialsProvider("your-cred").asInstanceOf[AWSCredentialsProvider]
    * }}}
    *
-   * See https://docs.databricks.com/aws/en/connect/unity-catalog/cloud-services/use-service-credentials for additional examples.
+   * See https://docs.databricks.com/aws/en/connect/unity-catalog/cloud-services/use-service-credentials for additional
+   * examples.
    */
-  def getServiceCredentialsProvider(credentialName: String = null): Object  
+  def getServiceCredentialsProvider(credentialName: String = null): Object
 }
 
 /**
