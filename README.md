@@ -1,3 +1,4 @@
+TEST
 # Databricks Utilities (DBUtils) for Scala
 
 **Stability**: [Experimental](https://docs.databricks.com/release-notes/release-types.html)
