@@ -7,12 +7,13 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, SerializationFeature}
 import org.scalatest.Tag
+import com.databricks.sdk.core.utils.Environment;
 import org.scalatest.flatspec.AnyFlatSpec
 import org.slf4j.{Logger, LoggerFactory}
 
+import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
-import java.util.function.Supplier
 
 class IntegrationTestBase extends AnyFlatSpec {
   protected val logger: Logger = LoggerFactory.getLogger(this.getClass)
@@ -48,13 +49,15 @@ class IntegrationTestBase extends AnyFlatSpec {
       return new DatabricksConfig()
     }
     val config = new DatabricksConfig()
-    val resolveMethod = classOf[DatabricksConfig].getDeclaredMethod("resolve", classOf[Supplier[Map[String, String]]])
+    
+    // Create Environment object with the required parameters
+    val envPath = System.getenv("PATH").split(File.pathSeparator)
+    val systemName = System.getProperty("os.name")
+    val environment = new Environment(env, envPath, systemName)
+    
+    val resolveMethod = classOf[DatabricksConfig].getDeclaredMethod("resolve", classOf[Environment])
     resolveMethod.setAccessible(true)
-    resolveMethod.invoke(
-      config,
-      new Supplier[java.util.Map[String, String]] {
-        override def get(): java.util.Map[String, String] = env
-      })
+    resolveMethod.invoke(config, environment)
     logger.info("loaded workspace env from debug-env.conf")
     config
   }
