@@ -7,18 +7,21 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, SerializationFeature}
 import org.scalatest.Tag
+import com.databricks.sdk.core.utils.Environment;
 import org.scalatest.flatspec.AnyFlatSpec
 import org.slf4j.{Logger, LoggerFactory}
 
+import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
-import java.util.function.Supplier
 
 class IntegrationTestBase extends AnyFlatSpec {
   protected val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  protected val config: DatabricksConfig = getDatabricksConfig
-  protected val w = new WorkspaceClient(config)
-  protected val dbutils: DBUtils = DBUtils.getDBUtils(config)
+  // Unit tests initialize this class, but do not have a valid config.
+  // So we lazy load the config, workspace client, and dbutils.
+  protected lazy val config: DatabricksConfig = getDatabricksConfig
+  protected lazy val w = new WorkspaceClient(config)
+  protected lazy val dbutils: DBUtils = DBUtils.getDBUtils(config)
 
   protected def isInDbr: Boolean = {
     System.getenv("DATABRICKS_RUNTIME_VERSION") != null
@@ -48,13 +51,15 @@ class IntegrationTestBase extends AnyFlatSpec {
       return new DatabricksConfig()
     }
     val config = new DatabricksConfig()
-    val resolveMethod = classOf[DatabricksConfig].getDeclaredMethod("resolve", classOf[Supplier[Map[String, String]]])
+
+    // Create Environment object with the required parameters
+    val envPath = System.getenv("PATH").split(File.pathSeparator)
+    val systemName = System.getProperty("os.name")
+    val environment = new Environment(env, envPath, systemName)
+
+    val resolveMethod = classOf[DatabricksConfig].getDeclaredMethod("resolve", classOf[Environment])
     resolveMethod.setAccessible(true)
-    resolveMethod.invoke(
-      config,
-      new Supplier[java.util.Map[String, String]] {
-        override def get(): java.util.Map[String, String] = env
-      })
+    resolveMethod.invoke(config, environment)
     logger.info("loaded workspace env from debug-env.conf")
     config
   }

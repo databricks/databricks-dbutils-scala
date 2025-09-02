@@ -1,14 +1,15 @@
 package com.databricks.sdk.scala.dbutils.integration
 
 import com.databricks.sdk.scala.dbutils.NameUtils
-import com.databricks.sdk.service.workspace.PutSecret
-
+import com.databricks.sdk.service.workspace.{CreateScope, DeleteSecret, PutSecret}
 import java.nio.charset.StandardCharsets
+
 import scala.collection.JavaConverters._
 
 class SecretsIntegrationTest extends IntegrationTestBase {
   def inScope(scopeName: String)(f: => Unit): Unit = {
-    w.secrets().createScope(scopeName)
+    val createRequest = new CreateScope().setScope(scopeName)
+    w.secrets().createScope(createRequest)
     try {
       f
     } finally {
@@ -34,7 +35,8 @@ class SecretsIntegrationTest extends IntegrationTestBase {
         val secrets = w.secrets().listSecrets(scopeName).asScala.toSeq
         assert(secrets.map(_.getKey).contains(secretName))
       } finally {
-        w.secrets().deleteSecret(scopeName, secretName)
+        val deleteRequest = new DeleteSecret().setScope(scopeName).setKey(secretName)
+        w.secrets().deleteSecret(deleteRequest)
       }
     }
   }
@@ -49,7 +51,8 @@ class SecretsIntegrationTest extends IntegrationTestBase {
         val secret = w.secrets().get(scopeName, secretName)
         assert(secret === secretString)
       } finally {
-        w.secrets().deleteSecret(scopeName, secretName)
+        val deleteRequest = new DeleteSecret().setScope(scopeName).setKey(secretName)
+        w.secrets().deleteSecret(deleteRequest)
       }
     }
   }
@@ -65,7 +68,8 @@ class SecretsIntegrationTest extends IntegrationTestBase {
         val secret = w.secrets().getBytes(scopeName, secretName)
         assert(secret === secretBytes)
       } finally {
-        w.secrets().deleteSecret(scopeName, secretName)
+        val deleteRequest = new DeleteSecret().setScope(scopeName).setKey(secretName)
+        w.secrets().deleteSecret(deleteRequest)
       }
     }
   }
