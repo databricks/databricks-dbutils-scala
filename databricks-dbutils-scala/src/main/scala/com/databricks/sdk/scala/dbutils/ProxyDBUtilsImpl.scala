@@ -11,8 +11,8 @@ private object Implicits {
   implicit class ReflectiveLookup(o: AnyRef) {
 
     /**
-     * Get a field from an object using reflection. This restores the the isAccessible state of the field after the
-     * field is accessed. This is very type-unsafe, so use with caution.
+     * Get a field from an object using reflection. This restores the isAccessible state of the field after the field is
+     * accessed. This is very type-unsafe, so use with caution.
      *
      * @param field
      *   the name of the field
@@ -29,6 +29,30 @@ private object Implicits {
         f.get(o).asInstanceOf[T]
       } finally {
         if (!accessible) f.setAccessible(false)
+      }
+    }
+
+    /**
+     * Get a field via an accessor method from an object using reflection. This restores the isAccessible state of the
+     * field after the field is accessed. This is very type-unsafe, so use with caution.
+     *
+     * This method is used to access lazy fields.
+     *
+     * @param field
+     *   the name of the field
+     * @tparam T
+     *   the type of the field
+     * @return
+     *   the value of the field
+     */
+    def getFieldUsingGetter[T](field: String): T = {
+      val getterMethod = o.getClass.getDeclaredMethod(field)
+      val accessible = getterMethod.isAccessible
+      if (!accessible) getterMethod.setAccessible(true)
+      try {
+        getterMethod.invoke(o).asInstanceOf[T]
+      } finally {
+        if (!accessible) getterMethod.setAccessible(false)
       }
     }
   }
@@ -209,8 +233,8 @@ class ProxyDBUtilsImpl private[dbutils] (baseObj: AnyRef) extends DBUtils {
         }
       })))
   override val library: LibraryUtils = getProxyInstance[LibraryUtils](baseObj.getField("library"))
-  override val credentials: DatabricksCredentialUtils =
-    getProxyInstance[DatabricksCredentialUtils](baseObj.getField("credentials"))
+  override lazy val credentials: DatabricksCredentialUtils =
+    getProxyInstance[DatabricksCredentialUtils](baseObj.getFieldUsingGetter("credentials"))
   override val jobs: JobsUtils = getProxyInstance[JobsUtils](
     baseObj.getField("jobs"),
     Map("taskValues" -> new MethodCallAdapter(convertResult = { taskValues =>
