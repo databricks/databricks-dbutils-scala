@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.databricks</groupId>
     <artifactId>databricks-dbutils-scala-parent_2.12</artifactId>
-    <version>0.1.4</version>
+    <version>0.1.5</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>databricks-dbutils-scala-examples</artifactId>
@@ -24,7 +24,7 @@
     <dependency>
       <groupId>com.databricks</groupId>
       <artifactId>databricks-dbutils-scala_2.12</artifactId>
-      <version>0.1.4</version>
+      <version>0.1.5</version>
     </dependency>
   </dependencies>
   <build>

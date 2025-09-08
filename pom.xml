@@ -6,7 +6,7 @@
   <!-- Group and artifact identifiers, versioning -->
   <groupId>com.databricks</groupId>
   <artifactId>databricks-dbutils-scala-parent_2.12</artifactId>
-  <version>0.1.4</version>
+  <version>0.1.5</version>
   <packaging>pom</packaging>
   <name>DBUtils for Scala</name>
   <description>DBUtils for Scala simplifies interacting with various components of Databricks, such as the Databricks File
