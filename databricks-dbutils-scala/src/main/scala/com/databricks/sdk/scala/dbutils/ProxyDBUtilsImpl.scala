@@ -11,8 +11,8 @@ private object Implicits {
   implicit class ReflectiveLookup(o: AnyRef) {
 
     /**
-     * Get a field from an object using reflection. This restores the isAccessible state of the field after the
-     * field is accessed. This is very type-unsafe, so use with caution.
+     * Get a field from an object using reflection. This restores the isAccessible state of the field after the field is
+     * accessed. This is very type-unsafe, so use with caution.
      *
      * @param field
      *   the name of the field
@@ -33,9 +33,8 @@ private object Implicits {
     }
 
     /**
-     * Get a field via an accessor method from an object using reflection.
-     * This restores the isAccessible state of the field after the field is accessed.
-     * This is very type-unsafe, so use with caution.
+     * Get a field via an accessor method from an object using reflection. This restores the isAccessible state of the
+     * field after the field is accessed. This is very type-unsafe, so use with caution.
      *
      * This method is used to access lazy fields.
      *
