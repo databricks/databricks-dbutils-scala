@@ -233,7 +233,7 @@ class ProxyDBUtilsImpl private[dbutils] (baseObj: AnyRef) extends DBUtils {
         }
       })))
   override val library: LibraryUtils = getProxyInstance[LibraryUtils](baseObj.getField("library"))
-  override val credentials: DatabricksCredentialUtils =
+  override lazy val credentials: DatabricksCredentialUtils =
     getProxyInstance[DatabricksCredentialUtils](baseObj.getFieldUsingGetter("credentials"))
   override val jobs: JobsUtils = getProxyInstance[JobsUtils](
     baseObj.getField("jobs"),
