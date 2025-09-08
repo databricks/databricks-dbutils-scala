@@ -36,7 +36,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Publish to the Maven Central Repository
-        run: mvn -DskipTests=true --batch-mode deploy -P${{ matrix.profile }}
+        run: mvn -e -X -DskipTests=true --batch-mode deploy -P${{ matrix.profile }}
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
