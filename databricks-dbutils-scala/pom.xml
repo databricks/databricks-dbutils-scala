@@ -9,6 +9,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>databricks-dbutils-scala_2.12</artifactId>
+  <name>DBUtils for Scala</name>
   <dependencies>
     <!-- Scala Standard Library -->
     <dependency>
