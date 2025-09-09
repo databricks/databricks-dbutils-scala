@@ -117,6 +117,10 @@ Testing the changes end to end is not straight forward since we don't have a ded
    ```
    3. Connect the cluster (step - 4.3) to the notebook and run
 
+## Release
+The following are the steps to release the
+Note: Due to limited support the infrastructure doesn't support simultaneous releases Currently the infrastructure
+
 ## Disclaimer
 - The product is in preview and not intended to be used in production;
 - The product may change or may never be released;
