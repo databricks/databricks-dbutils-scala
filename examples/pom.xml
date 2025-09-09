@@ -65,9 +65,6 @@
         <groupId>org.sonatype.central</groupId>
         <artifactId>central-publishing-maven-plugin</artifactId>
         <version>0.5.0</version>
-        <configuration>
-          <publishingServerId>central</publishingServerId>
-        </configuration>
       </plugin>
     </plugins>
   </build>
