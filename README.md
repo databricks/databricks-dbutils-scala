@@ -134,7 +134,7 @@ Follow these steps to create a release:
    Pull the latest changes from the `main` branch locally.  
 
 4. **Tag the release**  
-   Create a signed tag for the release:  
+   Create a tag for the release. For example:  
    ```bash
    git tag v0.1.5 -s
    ````
