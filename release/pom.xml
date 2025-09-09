@@ -10,12 +10,13 @@
   </parent>
   <artifactId>release-2.12</artifactId>
   <name>Release Module</name>
-  <description>Module purely for releasing using Nexus staging plugin</description>
+  <description>Module purely for releasing using Maven central publising plugin</description>
   <build>
     <plugins>
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.5.0</version>
       </plugin>
     </plugins>
   </build>

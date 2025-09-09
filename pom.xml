@@ -47,12 +47,6 @@
     <system>GitHub Actions</system>
     <url>https://github.com/databricks/databricks-dbutils-scala/blob/main/.github/workflows/pr.yml</url>
   </ciManagement>
-  <distributionManagement>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-  </distributionManagement>
   <build>
     <pluginManagement>
       <plugins>
@@ -102,14 +96,13 @@
         </plugin>
         <!-- Sonatype Release plugin -->
         <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.13</version>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.5.0</version>
           <extensions>true</extensions>
           <configuration>
-            <serverId>ossrh</serverId>
-            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            <publishingServerId>central</publishingServerId>
+            <autoPublish>true</autoPublish>
           </configuration>
         </plugin>
         <plugin>
@@ -133,8 +126,9 @@
         <artifactId>maven-gpg-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.5.0</version>
       </plugin>
     </plugins>
   </build>
