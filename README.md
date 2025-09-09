@@ -115,7 +115,36 @@ Testing the changes end to end is not straight forward since we don't have a ded
       import com.databricks.sdk.scala.dbutils.DBUtils
       DBUtils.getDBUtils().fs.mount("s3a://bucket-name", "/mnt/mount-point")
    ```
-   3. Connect the cluster (step - 4.3) to the notebook and run
+   3. Connect the cluster (step - 4.3) to the notebook and run 
+
+
+## Release Process
+Follow these steps to create a release:
+1. **Verify Scala version**  
+   Ensure you are using the correct Scala version for the release (**2.12** or **2.13**).  
+   > ⚠️ It is not currently possible to release both versions simultaneously.  
+
+   Update the Scala version in the `pom.xml` and workflow files as needed.  
+   For reference, see this [example change](https://github.com/databricks/databricks-dbutils-scala/pull/28).  
+
+2. **Update release version**  
+   Create a PR to update the release version in the `pom.xml` files and merge it.  
+
+3. **Checkout the main branch**  
+   Pull the latest changes from the `main` branch locally.  
+
+4. **Tag the release**  
+   Create a tag for the release. For example:  
+   ```bash
+   git tag v0.1.5 -s
+   ````
+5. **Push the tag**
+   Push the tag to the remote repository:
+   ```bash
+   git push origin v0.1.5
+   ```
+   Once the tag is pushed, the [release.yml](https://github.com/databricks/databricks-dbutils-scala/blob/main/.github/workflows/release.yml) workflow will be triggered automatically. On success, the GitHub Action will publish the artifacts to Maven Central.
+
 
 ## Disclaimer
 - The product is in preview and not intended to be used in production;
