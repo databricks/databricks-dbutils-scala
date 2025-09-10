@@ -30,7 +30,6 @@
   </developers>
   <modules>
     <module>databricks-dbutils-scala</module>
-    <module>examples</module>
     <module>release</module>
   </modules>
   <scm>
