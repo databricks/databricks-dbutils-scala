@@ -18,6 +18,7 @@
         <artifactId>central-publishing-maven-plugin</artifactId>
         <version>0.5.0</version>
         <configuration>
+          <autoPublish>true</autoPublish>
           <excludeArtifacts>
             <excludeArtifact>databricks-dbutils-scala-examples</excludeArtifact>
           </excludeArtifacts>
