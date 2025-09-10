@@ -10,7 +10,7 @@
   </parent>
   <artifactId>release-2.12</artifactId>
   <name>Release Module</name>
-  <description>Module purely for releasing using Maven central publising plugin</description>
+  <description>Module purely for release using maven central publising plugin</description>
   <build>
     <plugins>
       <plugin>
