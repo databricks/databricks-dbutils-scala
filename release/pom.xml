@@ -17,6 +17,11 @@
         <groupId>org.sonatype.central</groupId>
         <artifactId>central-publishing-maven-plugin</artifactId>
         <version>0.5.0</version>
+        <configuration>
+          <excludeArtifacts>
+            <excludeArtifact>databricks-dbutils-scala-examples</excludeArtifact>
+          </excludeArtifacts>
+        </configuration>
       </plugin>
     </plugins>
   </build>
