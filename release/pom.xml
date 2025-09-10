@@ -10,13 +10,18 @@
   </parent>
   <artifactId>release-2.12</artifactId>
   <name>Release Module</name>
-  <description>Module purely for releasing using Maven central publising plugin</description>
+  <description>Module purely for release using maven central publising plugin</description>
   <build>
     <plugins>
       <plugin>
         <groupId>org.sonatype.central</groupId>
         <artifactId>central-publishing-maven-plugin</artifactId>
         <version>0.5.0</version>
+        <configuration>
+          <excludeArtifacts>
+            <excludeArtifact>databricks-dbutils-scala-examples</excludeArtifact>
+          </excludeArtifacts>
+        </configuration>
       </plugin>
     </plugins>
   </build>
