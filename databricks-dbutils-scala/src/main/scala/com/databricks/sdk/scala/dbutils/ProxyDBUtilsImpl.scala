@@ -173,7 +173,7 @@ private object ProxyDBUtilsImpl {
       .getConstructor(
         classOf[Option[AnyRef]],
         classOf[Option[AnyRef]],
-        classOf[String],
+        classOf[Option[String]],
         classOf[Map[String, String]],
         classOf[Map[String, String]])
       .newInstance(
