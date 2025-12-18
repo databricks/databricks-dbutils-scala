@@ -45,7 +45,7 @@ jobs:
       # This step runs ONLY on branch pushes (dry-run)
       - name: Run Release Dry-Run (Verify)
         if: "!startsWith(github.ref, 'refs/tags/')"
-        run: mvn -Prelease -DskipTests=true --batch-mode verify
+        run: mvn -P${{ matrix.profile }} -DskipTests=true --batch-mode verify
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
