@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <!-- Group and artifact identifiers, versioning -->
   <groupId>com.databricks</groupId>
-  <artifactId>databricks-dbutils-scala-parent_2.12</artifactId>
+  <artifactId>databricks-dbutils-scala-parent_2.13</artifactId>
   <version>0.1.5</version>
   <packaging>pom</packaging>
   <name>DBUtils for Scala</name>
@@ -134,9 +134,6 @@
   <profiles>
     <profile>
       <id>scala-2.12</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
       <properties>
         <scala.major>2</scala.major>
         <scala.minor>12</scala.minor>
@@ -162,6 +159,9 @@
     </profile>
     <profile>
       <id>scala-2.13</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
         <scala.major>2</scala.major>
         <scala.minor>13</scala.minor>
