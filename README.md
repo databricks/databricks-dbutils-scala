@@ -9,6 +9,7 @@ The Databricks Utilities for Scala library is implemented mostly using the core 
 ## Contents
 
 - [Getting started](#getting-started)
+- [API Documentation](#api-documentation)
 - [Migrating to DBUtils](#migrating-to-dbutils)
 - [Limitations when running outside of Databricks Runtime](#limitations-when-running-outside-of-databricks-runtime)
 - [Interface stability](#interface-stability)
@@ -41,6 +42,21 @@ object App {
 ```
 
 This code is now portable and can be run both within Databricks Runtime and in applications outside of Databricks Runtime. When this code is run in Databricks Runtime, the returned DBUtils instance proxies all function calls to the DBUtils instance provided by Databricks Runtime. When this code is run outside of Databricks Runtime, DBUtils uses the REST API to emulate the behavior of DBUtils within Databricks Runtime, providing a consistent interface for users to build applications that can run within and outside of Databricks Runtime.
+
+## API Documentation
+
+The complete Scaladoc API documentation is available online:
+
+- **Scala 2.13**: [javadoc.io/doc/com.databricks/databricks-dbutils-scala_2.13](https://javadoc.io/doc/com.databricks/databricks-dbutils-scala_2.13)
+- **Scala 2.12**: [javadoc.io/doc/com.databricks/databricks-dbutils-scala_2.12](https://javadoc.io/doc/com.databricks/databricks-dbutils-scala_2.12)
+
+To generate the documentation locally, run:
+
+```bash
+mvn scala:doc -pl databricks-dbutils-scala
+```
+
+The generated documentation will be available in `databricks-dbutils-scala/target/site/scaladocs/`.
 
 ## Migrating to DBUtils
 
